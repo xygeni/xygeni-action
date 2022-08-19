@@ -1,0 +1,35 @@
+name: 'Wilosec Scanner'
+author: 'DepsDoctor'
+description: 'Runs Wilosec Scanner'
+inputs:
+  wilosecurl:
+    description: 'Base URL of the wilosec server.'
+    required: false
+    default: 'https://api.nauik.com/deps-doctor-service'
+  project:
+    description: 'Project name'
+    required: false
+    default: ${{ github.repository }}
+  username:
+    description: 'Username'
+    required: true
+  password:
+    description: 'Password'
+    required: true
+  commands:
+    description: 'Commands to execute'
+    required: true
+
+outputs:
+  result:
+    description: 'Return code of the execution'
+  message:
+    description: 'Return message of the execution'
+
+branding:
+  color: 'green'
+  icon: 'code'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

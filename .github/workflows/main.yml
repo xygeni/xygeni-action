@@ -1,0 +1,22 @@
+on: [push]
+
+jobs:
+  deps-doctor:
+    runs-on: ubuntu-latest
+    name: deps-doctor-github-action
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Scanner
+        uses: ./ # Uses an action in the root directory
+        id: Scanner
+        with:
+          username: ${{ secrets.SEC_U }}
+          password: ${{ secrets.SEC_P }}
+          commands: deps
+          project: github-action-excludes
+        env:
+          USERNAME: ${{ secrets.SEC_U }}
+          PASSWORD: ${{ secrets.SEC_P }}
