@@ -3,7 +3,7 @@ on: [push]
 jobs:
   deps-doctor:
     runs-on: ubuntu-latest
-    name: deps-doctor-github-action
+    name: depsdoctor-github-action
     steps:
       # To use this repository's private action,
       # you must check out the repository
