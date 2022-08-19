@@ -16,9 +16,10 @@ inputs:
   password:
     description: 'Password'
     required: true
-  commands:
-    description: 'Commands to execute'
-    required: true
+  command:
+    description: 'Command to execute'
+    required: false
+    default: deps
 
 outputs:
   result:

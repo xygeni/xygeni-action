@@ -38,7 +38,7 @@ public class DepsDoctorGitHubAction {
   private static final String DEFAULT_URL = "https://api.nauik.com/deps-doctor-service";
   private static final String USERNAME_PROPERTY = "username";
   private static final String PASSWORD_PROPERTY = "password";
-  private static final String COMMANDS_PROPERTY = "commands";
+  private static final String COMMAND_PROPERTY = "command";
   private static final String PROJECT_PROPERTY = "project";
   private static final String DIRECTORY_PROPERTY = "directory";
 
@@ -51,11 +51,11 @@ public class DepsDoctorGitHubAction {
 
     String username = System.getProperty(USERNAME_PROPERTY);
     String password = System.getProperty(PASSWORD_PROPERTY);
-    String commands = System.getProperty(COMMANDS_PROPERTY);
+    String command = System.getProperty(COMMAND_PROPERTY);
     String project = System.getProperty(PROJECT_PROPERTY);
     String dir = System.getProperty(DIRECTORY_PROPERTY);
 
-    if(isBlank(commands) || isBlank(project) || isBlank(dir)) {
+    if(isBlank(command) || isBlank(project) || isBlank(dir)) {
       log.error("The parameters commands, project and directory are mandatory");
       System.exit(1);
       return;
@@ -66,7 +66,7 @@ public class DepsDoctorGitHubAction {
     downloadScanner(DEFAULT_URL, username, password);
     unzipScanner();
     downloadCustomerConfig();
-    executeScanner(project, dir);
+    executeScanner(project, dir, command);
 
     log.info("Scanner action  completed successfully.");
   }
@@ -85,10 +85,10 @@ public class DepsDoctorGitHubAction {
     file.setExecutable(true);
   }
 
-  private static void executeScanner(String project, String dir) throws IOException, InterruptedException, TimeoutException {
+  private static void executeScanner(String project, String dir, String command) throws IOException, InterruptedException, TimeoutException {
     new ProcessExecutor()
         .directory(new File(DEPS_DOCTOR_DIR + "/deps-doctor/"))
-        .command("./deps-doctor", "deps", "-n", project, "-d", dir, "-e", DEPS_DOCTOR_DIR + "/deps-doctor/**", "-u").timeout(60, TimeUnit.MINUTES)
+        .command("./deps-doctor", command, "-n", project, "-d", dir, "-e", DEPS_DOCTOR_DIR + "/deps-doctor/**", "-u").timeout(60, TimeUnit.MINUTES)
         .redirectError(Slf4jStream.of(log).asWarn())
         .redirectOutput(Slf4jStream.of(log).asInfo()).execute();
   }

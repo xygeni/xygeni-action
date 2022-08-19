@@ -15,7 +15,6 @@ jobs:
         with:
           username: ${{ secrets.SEC_U }}
           password: ${{ secrets.SEC_P }}
-          commands: deps
           project: github-action-excludes
         env:
           USERNAME: ${{ secrets.SEC_U }}
