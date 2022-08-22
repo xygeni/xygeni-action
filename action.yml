@@ -19,7 +19,7 @@ inputs:
   run:
     description: 'Comma-separated scans to run: any, deps, secrets, misconf, codetamper, iac, compliance (all if not specified)'
     required: false
-    default: all
+    default: ''
   include:
     description: 'Include patterns, comma-separated'
     required: false
