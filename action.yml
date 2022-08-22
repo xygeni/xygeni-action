@@ -7,7 +7,7 @@ inputs:
     required: false
     default: 'https://api.nauik.com/deps-doctor-service'
   project:
-    description: 'Project name'
+    description: 'Project name github.repository by default'
     required: false
     default: ${{ github.repository }}
   username:
@@ -16,16 +16,74 @@ inputs:
   password:
     description: 'Password'
     required: true
-  command:
-    description: 'Command to execute'
+  run:
+    description: 'Comma-separated scans to run: any, deps, secrets, misconf, codetamper, iac, compliance (all if not specified)'
     required: false
-    default: deps
-
-outputs:
-  result:
-    description: 'Return code of the execution'
-  message:
-    description: 'Return message of the execution'
+    default: all
+  include:
+    description: 'Include patterns, comma-separated'
+    required: false
+    default: ''
+  exclude:
+    description: 'Exclude patterns, comma-separated. Example: "**/test/**"'
+    required: false
+    default: ''
+  output:
+    description: 'Output file template (filename will be prefixed by "SCAN"). Use "stdout" or "-" for standard output, "stderr" for standard error.'
+    required: false
+    default: ''
+  format:
+    description: 'Output format: none, text, json, csv (default:none)'
+    required: false
+    default: 'none'
+  columns:
+    description: 'Report columns, as --cols SCAN=col1,col2,... (default: from config for each scan type)'
+    required: false
+    default: ''
+  code:
+    description: 'If true, report code blocks or sensitive text, if false the code will be obfuscated. (default:true)'
+    required: false
+    default: 'true'
+  conf:
+    description: 'Configuration filepath template (filename will be prefixed by "SCAN")'
+    required: false
+    default: ''
+  baseline:
+    description: 'Baseline filepath template (filename will be prefixed by "SCAN")'
+    required: false
+    default: ''
+  custom_detectors_dir:
+    description: 'Directory with custom detectors'
+    required: false
+    default: ''
+  detectors:
+    description: 'SCAN=list, comma-separated list of IDs for detectors to run, severity or "all"'
+    required: false
+    default: ''
+  skip_detectors:
+    description: 'SCAN=list, comma-separated list of IDs for detectors to ignore, or severity'
+    required: false
+    default: ''
+  sbom:
+    description: 'SBOM file to generate. Use "stdout" or "-" for standard output, "stderr" for standard error'
+    required: false
+    default: ''
+  sbom_format:
+    description: 'SBOM format: cyclonedx, spdx, swid'
+    required: false
+    default: ''
+  secrets_mode:
+    description: '(Secrets) scan mode: scan, diff, history (default:scan)'
+    required: false
+    default: 'scan'
+  standard:
+    description: '(Compliance) ID of the standard to check (default from config file)'
+    required: false
+    default: ''
+  fail_on:
+    description: 'When the action fails: "never" (always exit with code 0, default value), "try_all" (Try all scans, even after a scan failure or error), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code'
+    required: false
+    default: 'never'
 
 branding:
   color: 'green'
