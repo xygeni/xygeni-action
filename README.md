@@ -39,4 +39,32 @@ Where:
 - `SEC_P` is wilosec web password.
 
 
+### Parameters
+
+The available parameters are:
+
+| Parameter            | Description                                                                                                                                                    | Mandatory | Default value                             |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------------------------------------|
+| wilosecurl           | Base URL of the wilosec server.                                                                                                                                | false     | https://api.nauik.com/deps-doctor-service |
+| project              | Project name                                                                                                                                                   | false     | ${{ github.repository }}                  |
+| username             | Username                                                                                                                                                       | true      |                                           |
+| password             | Password                                                                                                                                                       | true      |                                           |
+| run                  | Comma-separated scans to run: any, deps, secrets, misconf, codetamper, iac, compliance (all if not specified)                                                  | false     |                                           |
+| include              | Include patterns, comma-separated                                                                                                                              | false     |                                           |
+| exclude              | Exclude patterns, comma-separated. Example: "**/test/**"                                                                                                       | false     |                                           |
+| output               | Output file template (filename will be prefixed by "SCAN"). Use "stdout" or "-" for standard output, "stderr" for standard error.                              | false     |                                           |
+| format               | Output format: none, text, json, csv                                                                                                                           | false     | none                                      |
+| columns              | Report columns, as --cols SCAN=col1,col2,...                                                                                                                   | false     | From config for each scan type            |
+| code                 | If true, report code blocks or sensitive text, if false the code will be obfuscated                                                                            | false     | true                                      |
+| conf                 | Configuration filepath template (filename will be prefixed by "SCAN")                                                                                          | false     |                                           |
+| baseline             | Baseline filepath template (filename will be prefixed by "SCAN")                                                                                               | false     |                                           |
+| custom_detectors_dir | Directory with custom detectors                                                                                                                                | false     |                                           |
+| detectors            | SCAN=list, comma-separated list of IDs for detectors to run, severity or "all"                                                                                 | false     |                                           |
+| skip_detectors       | SCAN=list, comma-separated list of IDs for detectors to ignore, or severity                                                                                    | false     |                                           |
+| sbom                 | SBOM file to generate. Use "stdout" or "-" for standard output, "stderr" for standard error                                                                    | false     |                                           |
+| sbom_format          | SBOM format: cyclonedx, spdx, swid                                                                                                                             | false     |                                           |
+| secrets_mode         | (Secrets) scan mode: scan, diff, history                                                                                                                       | false     | scan                                      |
+| standard             | (Compliance) ID of the standard to check                                                                                                                       | false     | From config file                          |
+| fail_on              | When the action fails: "never" (always exit with code 0, default value), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code | false     | never                                     | 
+| try_all_scans        | Try all scans, even after a scan failure or error                                                                                                              | false     | false                                     |
 
