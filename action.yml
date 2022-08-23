@@ -81,9 +81,13 @@ inputs:
     required: false
     default: ''
   fail_on:
-    description: 'When the action fails: "never" (always exit with code 0, default value), "try_all" (Try all scans, even after a scan failure or error), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code'
+    description: 'When the action fails: "never" (always exit with code 0, default value), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code'
     required: false
     default: 'never'
+  try_all_scans:
+    description: 'Try all scans, even after a scan failure or error. Default value: false'
+    required: false
+    default: 'false'
 
 branding:
   color: 'green'

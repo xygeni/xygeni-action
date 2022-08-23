@@ -34,6 +34,7 @@ public class Command {
   public static final String SECRETS_MODE_PROPERTY = "secrets_mode";
   public static final String STANDARD_PROPERTY = "standard";
   public static final String FAIL_ON_PROPERTY = "fail_on";
+  public static final String TRY_ALL_SCANS_PROPERTY = "try_all_scans";
 
   private String project;
   private String directory;
@@ -54,6 +55,7 @@ public class Command {
   private String secretsMode;
   private String standard;
   private String failOn;
+  private String tryAllScans;
 
   public String[] getCommandParams() {
     List<String> params = new ArrayList<>();
@@ -78,12 +80,11 @@ public class Command {
     if(!isBlank(failOn)) {
       if(failOn.equalsIgnoreCase("never")) {
         addParam("--never-fail", null, params);
-      } else if(failOn.equalsIgnoreCase("try_all")) {
-        addParam("--try-all-scans", null, params);
       } else {
         addParam("--fail-on", failOn, params);
       }
     }
+    if(!isBlank(tryAllScans) && "true".equalsIgnoreCase(tryAllScans)) addParam("--try-all-scans", null, params);
     return params.toArray(new String[0]);
   }
 

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
 import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class DepsDoctorGitHubAction {
 
   private static final String[] DEPS_DOCTOR_CMD = {"./deps-doctor", "scan", "-u"};
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
 
     log.info("Starting scanner action...");
 
@@ -75,6 +76,7 @@ public class DepsDoctorGitHubAction {
         .secretsMode(System.getProperty(SECRETS_MODE_PROPERTY))
         .standard(System.getProperty(STANDARD_PROPERTY))
         .failOn(System.getProperty(FAIL_ON_PROPERTY))
+        .tryAllScans(System.getProperty(TRY_ALL_SCANS_PROPERTY))
         .build();
 
     if(isBlank(command.getProject()) || isBlank(command.getDirectory())) {
@@ -87,10 +89,18 @@ public class DepsDoctorGitHubAction {
       return;
     }
 
-    downloadScanner(url, username, password);
-    unzipScanner();
-    downloadCustomerConfig();
-    executeScanner(command);
+    try {
+      downloadScanner(url, username, password);
+      unzipScanner();
+      downloadCustomerConfig();
+      executeScanner(command);
+    }catch(Throwable e) {
+      log.error("Error executing depsdoctor-action: " + e.getMessage(), e);
+      if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
+        System.exit(0);
+        return;
+      }
+    }
 
     log.info("Scanner action  completed successfully.");
   }
@@ -118,11 +128,13 @@ public class DepsDoctorGitHubAction {
     }
 
     String[] args = ArrayUtils.addAll(DEPS_DOCTOR_CMD, command.getCommandParams());
-    new ProcessExecutor()
+    ProcessResult result = new ProcessExecutor()
         .directory(new File(DEPS_DOCTOR_DIR + "/deps-doctor/"))
         .command(args).timeout(60, TimeUnit.MINUTES)
         .redirectError(Slf4jStream.of(log).asWarn())
         .redirectOutput(Slf4jStream.of(log).asInfo()).execute();
+
+    System.exit(result.getExitValue());
   }
 
   private static void downloadScanner(String url, String username, String password) throws Exception {
