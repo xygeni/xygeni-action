@@ -47,7 +47,7 @@ public class DepsDoctorGitHubAction {
   private static final String ZIP_FILE = "scanner.zip";
   private static final String DEPS_DOCTOR_DIR = "deps_doctor";
 
-  private static final String[] DEPS_DOCTOR_CMD = {"./deps-doctor", "scan", "-u"};
+  private static final String[] DEPS_DOCTOR_CMD = {"./deps-doctor", "scan"};
 
   public static void main(String[] args) {
 
