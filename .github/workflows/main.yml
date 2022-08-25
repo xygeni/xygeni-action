@@ -15,6 +15,7 @@ jobs:
         with:
           username: ${{ secrets.SEC_U }}
           password: ${{ secrets.SEC_P }}
+          project: testingRetro
         env:
           USERNAME: ${{ secrets.SEC_U }}
           PASSWORD: ${{ secrets.SEC_P }}
