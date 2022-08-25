@@ -68,3 +68,4 @@ The available parameters are:
 | fail_on              | When the action fails: "never" (always exit with code 0, default value), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code | false     | never                                     | 
 | try_all_scans        | Try all scans, even after a scan failure or error                                                                                                              | false     | false                                     |
 
+  
