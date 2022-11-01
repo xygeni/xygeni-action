@@ -25,7 +25,7 @@ The `xygeni-action` action downloads, configures and executes the Xygeni Scanner
 
 ### Setting API token as encrypted secret in GitHub
 
-The scanner needs an *API token* to communicate with the Xygeni platform. Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using https://docs.github.com/en/actions/security-guides/encrypted-secrets[GitHub Encrypted Secrets].
+The scanner needs an *API token* to communicate with the Xygeni platform. Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
 ![](images/i01_secret.png)
 
@@ -135,7 +135,7 @@ The available parameters for the action are:
 | try_all_scans        | Try all scans, even after a scan failure or error                                                                                                              | false     | false                          |
 
 
-> :tip: **Tip:** Use `fail_on = never` to avoid breaking the build if the scan finds issues or fails.
-> You may also use fail_on = severity:critical to terminate the build only when critical issues are found.
+> **Tip:** Use `fail_on = never` to avoid breaking the build if the scan finds issues or fails.
+> You may also use `fail_on = severity:critical` to terminate the build only when critical issues are found.
 
-> :tip: **Tip:** Use `run = secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
+> **Tip:** Use `run = secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
