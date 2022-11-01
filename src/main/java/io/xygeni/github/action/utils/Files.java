@@ -1,4 +1,4 @@
-package com.depsdoctor.github.action.utils;
+package io.xygeni.github.action.utils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -7,7 +7,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * File utilities
+ * File utilities. To make the project self-contained.
  */
 public class Files {
 

@@ -1,4 +1,4 @@
-package com.depsdoctor.github.action.config;
+package io.xygeni.github.action.config;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

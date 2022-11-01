@@ -1,21 +1,32 @@
-name: 'Wilosec Scanner'
-author: 'DepsDoctor'
-description: 'Runs Wilosec Scanner'
+#
+# GitHub Action for running Xygeni scanner on GitHub workflows.
+#
+name: 'Xygeni Scanner'
+author: 'Xygeni'
+description: 'Runs Xygeni Scanner'
+
 inputs:
-  wilosecurl:
-    description: 'Base URL of the wilosec server.'
+  xygeni_url:
+    description: 'Base URL of the Xygeni API.'
     required: false
-    default: 'https://api.nauik.com/deps-doctor-service'
+    default: 'https://api.xygeni.io'
   project:
-    description: 'Project name github.repository by default'
+    description: 'Project name, default: ${github.repository}'
     required: false
     default: ${{ github.repository }}
+  directory:
+    description: 'The directory to analyze, default: ${github.workspace}'
+    required: false
+    default: ${{ github.workspace }}
+  token:
+    description: 'API token. Must be provided, or username/password as alternative.'
+    required: false
   username:
-    description: 'Username'
-    required: true
+    description: 'Username (using API token is recommended)'
+    required: false
   password:
-    description: 'Password'
-    required: true
+    description: 'Password (using API token is recommended)'
+    required: false
   run:
     description: 'Comma-separated scans to run: any, deps, secrets, misconf, codetamper, iac, compliance (all if not specified)'
     required: false

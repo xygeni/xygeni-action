@@ -1,0 +1,198 @@
+package io.xygeni.github.action;
+
+import io.xygeni.github.action.config.ApiConfig;
+import io.xygeni.github.action.config.DepsDoctorConfig;
+import io.xygeni.github.action.http.HttpClientUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
+import org.zeroturnaround.exec.stream.slf4j.Slf4jStream;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static io.xygeni.github.action.Command.*;
+import static io.xygeni.github.action.utils.Files.unzipFile;
+import static java.lang.System.getProperty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+/**
+ * Main class that will execute the process:
+ * <ul>
+ *   <li>Get parameters</li>
+ *   <li>Validate parameters</li>
+ *   <li>Download scanner</li>
+ *   <li>Unzip scanner</li>
+ *   <li>Download customer configuration</li>
+ *   <li>Execute scanner</li>
+ * <ul/>
+ *
+ * @author felix.carnicero
+ *
+ * @version 01-Nov-2022 lrodriguez -
+ *   Changed deps-doctor by xygeni.
+ *   The scanner directory moved to RUNNER_TEMP, a temporary directory instead of the working dir ()
+ */
+public class XygeniGitHubAction {
+
+  private static final Logger log = LoggerFactory.getLogger(XygeniGitHubAction.class);
+
+  private static final String DEFAULT_URL = "https://api.xygeni.com";
+
+  private static final String TOKEN_PROPERTY = "token";
+  private static final String USERNAME_PROPERTY = "username";
+  private static final String PASSWORD_PROPERTY = "password";
+  private static final String SCANNER_DIR_PROPERTY = "scanner_dir";
+
+  private static final String XYGENI_URL_PROPERTY = "xygeni_url";
+
+  private static final String ZIP_FILE = "xygeni_scanner.zip";
+
+  // The relative directory to working directory where the scanner will be unzipped, when RUNNER_TEMP not available
+  private static final String XYGENI_SCANNER_DEPLOYDIR = ".";
+
+  // The scanner directory in zip directory
+  private static final String XYGENI_SCANNER_DIR = "xygeni_scanner";
+  // The script (bash version) to run
+  private static final String XYGENI_SCRIPT = "xygeni";
+  // The location of the main configuration (for writing the scanner authentication)
+  private static final String XYGENI_CONF_PATH = XYGENI_SCANNER_DIR + "/conf/xygeni.yml";
+
+  private static final String[] XYGENI_CMD = { XYGENI_SCRIPT, "scan"};
+
+  public static void main(String[] args) {
+    log.info("Starting scanner action...");
+
+    String url = getProperty(XYGENI_URL_PROPERTY, DEFAULT_URL);
+    String token = getProperty(TOKEN_PROPERTY);
+    String username = getProperty(USERNAME_PROPERTY);
+    String password = getProperty(PASSWORD_PROPERTY);
+
+    // Use RUNNER_TEMP temporary directory for the runner
+    String scannerDir = getProperty(SCANNER_DIR_PROPERTY);
+    if(isBlank(scannerDir)) scannerDir = System.getenv("RUNNER_TEMP");
+
+    Command command = builder()
+        .project(getProperty(PROJECT_PROPERTY))
+        .directory(getProperty(DIRECTORY_PROPERTY))
+        .run(getProperty(RUN_PROPERTY))
+        .include(getProperty(INCLUDE_PROPERTY))
+        .exclude(getProperty(EXCLUDE_PROPERTY))
+        .output(getProperty(OUTPUT_PROPERTY))
+        .format(getProperty(FORMAT_PROPERTY))
+        .columns(getProperty(COLUMNS_PROPERTY))
+        .code(getProperty(CODE_PROPERTY))
+        .conf(getProperty(CONF_PROPERTY))
+        .baseline(getProperty(BASELINE_PROPERTY))
+        .customDetectorsDir(getProperty(CUSTOM_DETECTORS_DIR_PROPERTY))
+        .detectors(getProperty(DETECTORS_PROPERTY))
+        .skipDetectors(getProperty(SKIP_DETECTORS_PROPERTY))
+        .sbom(getProperty(SBOM_PROPERTY))
+        .sbomFormat(getProperty(SBOM_FORMAT_PROPERTY))
+        .secretsMode(getProperty(SECRETS_MODE_PROPERTY))
+        .standard(getProperty(STANDARD_PROPERTY))
+        .failOn(getProperty(FAIL_ON_PROPERTY))
+        .tryAllScans(getProperty(TRY_ALL_SCANS_PROPERTY))
+        .build();
+
+    // Validate that either token or username/password are available
+    if(isBlank(token) || (isBlank(username) && isBlank(password))) {
+      log.error("Either API token or username/password must be specified");
+      if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
+        System.exit(0);
+        return;
+      }
+      System.exit(1);
+      return;
+    }
+
+    // Check that the mandatory project / directory arguments are provided
+    if(isBlank(command.getProject()) || isBlank(command.getDirectory())) {
+      log.error("The project and directory are mandatory");
+      if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
+        System.exit(0);
+        return;
+      }
+      System.exit(1);
+      return;
+    }
+
+    try {
+      downloadScanner(url, token, username, password);
+      unzipScanner(scannerDir);
+      downloadCustomerConfig(url, token, username, password, scannerDir);
+
+      executeScanner(command, scannerDir);
+
+    } catch(Throwable e) {
+      log.error("Error executing depsdoctor-action: " + e.getMessage(), e);
+      if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
+        System.exit(0);
+        return;
+      }
+    }
+
+    log.info("Scanner action  completed successfully.");
+  }
+
+  private static void unzipScanner(String scannerDir) throws IOException {
+    Path zipScanner = Path.of(ZIP_FILE);
+    Path targetDir = Path.of(scannerDir); // the working dir is GITHUB_WORKSPACE
+    unzipFile(zipScanner, targetDir);
+
+    // New layout: the scanner zipfile uses a directory xygeni_scanner. xygeni is the bash executable
+    File executable = new File(scannerDir, XYGENI_SCANNER_DIR+"/xygeni");
+    //noinspection ResultOfMethodCallIgnored
+    executable.setExecutable(true);
+  }
+
+  private static void downloadCustomerConfig(String url, String token, String username, String password, String scannerDir) {
+    // TODO download central configuration, if any
+    File configFile = new File(scannerDir, XYGENI_CONF_PATH);
+    // TODO register in the scanner configuration the url and token or username/password
+    // UNLESS the token can be passed to the scanner process via environment variable or Java system property or command-line argument.
+  }
+
+  private static void executeScanner(Command command, String scannerDir) throws IOException, InterruptedException, TimeoutException {
+    // Exclude the scanner downloaded, if not the temporary RUNNER_TEMP
+    if(XYGENI_SCANNER_DEPLOYDIR.equals(scannerDir)) {
+      if (isBlank(command.getExclude())) {
+        command.setExclude(XYGENI_SCANNER_DIR+"/**");
+      } else {
+        command.setExclude(command.getExclude() + "," + XYGENI_SCANNER_DIR + "/**");
+      }
+    }
+
+    String[] args = ArrayUtils.addAll(XYGENI_CMD, command.getCommandParams());
+    ProcessResult result = new ProcessExecutor()
+        .directory( new File(scannerDir, XYGENI_SCANNER_DIR) )
+        .command(args).timeout(60, TimeUnit.MINUTES)
+        .redirectError(Slf4jStream.of(log).asWarn())
+        .redirectOutput(Slf4jStream.of(log).asInfo()).execute();
+
+    System.exit(result.getExitValue());
+  }
+
+  private static void downloadScanner(String url, String token, String username, String password) throws Exception {
+    DepsDoctorConfig config = new DepsDoctorConfig();
+    ApiConfig api = new ApiConfig();
+    api.setUrl(url);
+    api.setToken(token);
+    api.setUsername(username);
+    api.setPassword(password);
+    config.setApi(api);
+
+    InputStream is = new HttpClientUtils().downloadScanner(config);
+    Files.copy(is, Path.of(ZIP_FILE), StandardCopyOption.REPLACE_EXISTING);
+  }
+
+
+}

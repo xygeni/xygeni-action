@@ -1,6 +1,3 @@
-/depsdoctor-github-action.iml
-/DepsDoctor-GitHubAction.iml
-/github-action.iml
+/*.iml
 /target/
 /.idea/
-/depsdoctor-action.iml

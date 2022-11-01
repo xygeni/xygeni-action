@@ -1,18 +1,18 @@
-package com.depsdoctor.github.action;
+package io.xygeni.github.action;
 
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.depsdoctor.github.action.utils.Strings.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * Class that contains all user parameters
+ * Class that contains all user parameters for the scanner execution.
  */
-@Data
-@Builder
+@Data @Builder
 public class Command {
 
   public static final String PROJECT_PROPERTY = "project";

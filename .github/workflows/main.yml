@@ -1,21 +1,23 @@
-on: [push]
+# Commented for now because scanner is not renamed yet
+#on: push
+on: workflow_dispatch
 
 jobs:
-  deps-doctor:
+  scan-test:
     runs-on: ubuntu-latest
-    name: depsdoctor-github-action
+    name: xygeni-github-action
+
     steps:
       # To use this repository's private action,
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Scanner
         uses: ./ # Uses an action in the root directory
         id: Scanner
         with:
           username: ${{ secrets.SEC_U }}
           password: ${{ secrets.SEC_P }}
+          # token: ${{ secrets.XYGENI_TOKEN }}
           project: testingRetro
-        env:
-          USERNAME: ${{ secrets.SEC_U }}
-          PASSWORD: ${{ secrets.SEC_P }}

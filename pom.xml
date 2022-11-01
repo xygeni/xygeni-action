@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.depsdoctor</groupId>
-    <artifactId>depsdoctor-github-action</artifactId>
+    <groupId>io.xygeni</groupId>
+    <artifactId>xygeni-github-action</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>DepsDoctor-GitHubAction</name>
+    <name>Xygeni-GitHubAction</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -55,10 +55,10 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>deps-doctor-github-action</finalName>
+                    <finalName>xygeni-github-action</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>com.depsdoctor.github.action.DepsDoctorGitHubAction</mainClass>
+                            <mainClass>io.xygeni.github.action.XygeniGitHubAction</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
