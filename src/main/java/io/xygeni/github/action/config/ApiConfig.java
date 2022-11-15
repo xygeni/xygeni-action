@@ -24,6 +24,6 @@ public class ApiConfig {
   }
 
   public boolean isTokenAuthentication() {
-    return isNotBlank(getToken());
+    return isNotBlank(getToken()) && getToken().startsWith("xya_");
   }
 }

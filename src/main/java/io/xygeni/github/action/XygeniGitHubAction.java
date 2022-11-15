@@ -3,6 +3,7 @@ package io.xygeni.github.action;
 import io.xygeni.github.action.config.ApiConfig;
 import io.xygeni.github.action.config.DepsDoctorConfig;
 import io.xygeni.github.action.http.HttpClientUtils;
+import io.xygeni.github.action.utils.OS;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import static io.xygeni.github.action.Command.*;
 import static io.xygeni.github.action.utils.Files.unzipFile;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Main class that will execute the process:
@@ -67,6 +69,9 @@ public class XygeniGitHubAction {
   private static final String XYGENI_CONF_PATH = XYGENI_SCANNER_DIR + "/conf/xygeni.yml";
 
   private static final String[] XYGENI_CMD = { XYGENI_SCRIPT, "scan"};
+
+  private static final String PS_FILE = "install.ps1";
+  private static final String SH_FILE = "install.sh";
 
   public static void main(String[] args) {
     log.info("Starting scanner action...");
@@ -126,10 +131,8 @@ public class XygeniGitHubAction {
     }
 
     try {
-      downloadScanner(url, token, username, password);
-      unzipScanner(scannerDir);
-      downloadCustomerConfig(url, token, username, password, scannerDir);
-
+      File script = downloadScriptInstaller(scannerDir, url, token, username, password);
+      executeInstaller(script, url, token, username, password);
       executeScanner(command, scannerDir);
 
     } catch(Throwable e) {
@@ -143,6 +146,20 @@ public class XygeniGitHubAction {
     log.info("Scanner action  completed successfully.");
   }
 
+  private static void executeInstaller(File script, String url, String token, String username, String password) throws IOException, InterruptedException, TimeoutException {
+    String[] command;
+    if(isNotBlank(token) && token.startsWith("xya_")){
+      command = new String[]{script.getAbsolutePath(), "-o", "-t", token};
+    }else{
+      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password};
+    }
+    new ProcessExecutor()
+        .directory(script.getParentFile())
+        .command(command).timeout(60, TimeUnit.MINUTES)
+        .redirectError(Slf4jStream.of(log).asWarn())
+        .redirectOutput(Slf4jStream.of(log).asInfo()).execute();
+  }
+
   private static void unzipScanner(String scannerDir) throws IOException {
     Path zipScanner = Path.of(ZIP_FILE);
     Path targetDir = Path.of(scannerDir); // the working dir is GITHUB_WORKSPACE
@@ -152,13 +169,6 @@ public class XygeniGitHubAction {
     File executable = new File(scannerDir, XYGENI_SCANNER_DIR+"/xygeni");
     //noinspection ResultOfMethodCallIgnored
     executable.setExecutable(true);
-  }
-
-  private static void downloadCustomerConfig(String url, String token, String username, String password, String scannerDir) {
-    // TODO download central configuration, if any
-    File configFile = new File(scannerDir, XYGENI_CONF_PATH);
-    // TODO register in the scanner configuration the url and token or username/password
-    // UNLESS the token can be passed to the scanner process via environment variable or Java system property or command-line argument.
   }
 
   private static void executeScanner(Command command, String scannerDir) throws IOException, InterruptedException, TimeoutException {
@@ -181,7 +191,7 @@ public class XygeniGitHubAction {
     System.exit(result.getExitValue());
   }
 
-  private static void downloadScanner(String url, String token, String username, String password) throws Exception {
+  private static File downloadScriptInstaller(String scannerDir, String url, String token, String username, String password) throws Exception {
     DepsDoctorConfig config = new DepsDoctorConfig();
     ApiConfig api = new ApiConfig();
     api.setUrl(url);
@@ -190,8 +200,16 @@ public class XygeniGitHubAction {
     api.setPassword(password);
     config.setApi(api);
 
-    InputStream is = new HttpClientUtils().downloadScanner(config);
-    Files.copy(is, Path.of(ZIP_FILE), StandardCopyOption.REPLACE_EXISTING);
+    InputStream is = new HttpClientUtils().downloadScript(config);
+    if(OS.isWindows()) {
+      File psFile = new File(scannerDir, PS_FILE);
+      Files.copy(is, psFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      return psFile;
+    }else{
+      File shFile = new File(scannerDir, SH_FILE);
+      Files.copy(is, shFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      return shFile;
+    }
   }
 
 

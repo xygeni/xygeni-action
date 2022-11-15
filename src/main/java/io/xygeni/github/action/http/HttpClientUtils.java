@@ -3,8 +3,9 @@ package io.xygeni.github.action.http;
 import io.xygeni.github.action.config.ApiConfig;
 import io.xygeni.github.action.config.DepsDoctorConfig;
 import io.xygeni.github.action.config.ProxyConfig;
-import org.apache.commons.lang3.StringUtils;
+import io.xygeni.github.action.utils.OS;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.net.http.HttpClient;
@@ -125,5 +126,15 @@ public class HttpClientUtils {
     }
 
     return ProxySelector.getDefault();
+  }
+
+  public InputStream downloadScript(DepsDoctorConfig config) throws URISyntaxException, IOException, InterruptedException {
+    HttpRequest request;
+    if(OS.isWindows()) {
+      request = getRequestBuilder("/latest/scanner/powershell", config).GET().build();
+    } else {
+      request = getRequestBuilder("/latest/scanner/bash", config).GET().build();
+    }
+    return client(config).send(request, HttpResponse.BodyHandlers.ofInputStream()).body();
   }
 }
