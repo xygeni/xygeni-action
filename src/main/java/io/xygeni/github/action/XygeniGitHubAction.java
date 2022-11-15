@@ -109,7 +109,7 @@ public class XygeniGitHubAction {
         .build();
 
     // Validate that either token or username/password are available
-    if(isBlank(token) || (isBlank(username) && isBlank(password))) {
+    if(isBlank(token) && isBlank(username)) {
       log.error("Either API token or username/password must be specified");
       if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
         System.exit(0);

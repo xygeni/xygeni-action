@@ -21,6 +21,3 @@ jobs:
           password: ${{ secrets.SEC_P }}
           # token: ${{ secrets.XYGENI_TOKEN }}
           project: testingRetro
-        env:
-          USERNAME: ${{ secrets.SEC_U }}
-          PASSWORD: ${{ secrets.SEC_P }}
