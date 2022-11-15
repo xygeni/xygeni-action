@@ -3,12 +3,12 @@ java \
   -Dxygeni_url=${INPUT_XYGENI_URL} \
   -Dscanner_dir=${RUNNER_TEMP} \
   -Dtoken=${INPUT_TOKEN} \
-  -Dusername=${INPUT_USERNAME}
+  -Dusername=${INPUT_USERNAME} \
   -Dpassword=${INPUT_PASSWORD} \
   -Drun=${INPUT_RUN} \
   -Dproject=${INPUT_PROJECT} \
   -Ddirectory=${GITHUB_WORKSPACE} \
-  -Dinclude=${INPUT_INCLUDE}
+  -Dinclude=${INPUT_INCLUDE} \
   -Dexclude=${INPUT_EXCLUDE} \
   -Doutput=${INPUT_OUTPUT} \
   -Dformat=${INPUT_FORMAT} \
