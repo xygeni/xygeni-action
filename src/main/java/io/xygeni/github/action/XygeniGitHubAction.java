@@ -136,7 +136,7 @@ public class XygeniGitHubAction {
       executeScanner(command, scannerDir);
 
     } catch(Throwable e) {
-      log.error("Error executing depsdoctor-action: " + e.getMessage(), e);
+      log.error("Error executing xygeni-action: " + e.getMessage(), e);
       if(!isBlank(command.getFailOn()) && command.getFailOn().equalsIgnoreCase("never")) {
         System.exit(0);
         return;
