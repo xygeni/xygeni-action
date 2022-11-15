@@ -2,7 +2,7 @@
 java \
   "-Dxygeni_url=${INPUT_XYGENI_URL}" \
   "-Dscanner_dir=${RUNNER_TEMP}" \
-  "-Dtoken="${INPUT_TOKEN}" \
+  "-Dtoken=${INPUT_TOKEN}" \
   "-Dusername=${INPUT_USERNAME}" "-Dpassword=${INPUT_PASSWORD}" \
   "-Drun=${INPUT_RUN}" "-Dproject=${INPUT_PROJECT}" \
   "-Ddirectory=${GITHUB_WORKSPACE}" \
