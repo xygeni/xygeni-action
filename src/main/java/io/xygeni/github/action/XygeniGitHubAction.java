@@ -15,13 +15,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static io.xygeni.github.action.Command.*;
-import static io.xygeni.github.action.utils.Files.unzipFile;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -56,15 +56,13 @@ public class XygeniGitHubAction {
 
   private static final String XYGENI_URL_PROPERTY = "xygeni_url";
 
-  private static final String ZIP_FILE = "xygeni_scanner.zip";
-
   // The relative directory to working directory where the scanner will be unzipped, when RUNNER_TEMP not available
   private static final String XYGENI_SCANNER_DEPLOYDIR = ".";
 
   // The scanner directory in zip directory
   private static final String XYGENI_SCANNER_DIR = "xygeni_scanner";
   // The script (bash version) to run
-  private static final String XYGENI_SCRIPT = "xygeni";
+  private static final String XYGENI_SCRIPT = "./xygeni";
   // The location of the main configuration (for writing the scanner authentication)
   private static final String XYGENI_CONF_PATH = XYGENI_SCANNER_DIR + "/conf/xygeni.yml";
 
@@ -84,6 +82,7 @@ public class XygeniGitHubAction {
     // Use RUNNER_TEMP temporary directory for the runner
     String scannerDir = getProperty(SCANNER_DIR_PROPERTY);
     if(isBlank(scannerDir)) scannerDir = System.getenv("RUNNER_TEMP");
+    if(isBlank(scannerDir)) scannerDir = (new File(".")).getAbsolutePath();
 
     Command command = builder()
         .project(getProperty(PROJECT_PROPERTY))
@@ -132,7 +131,8 @@ public class XygeniGitHubAction {
 
     try {
       File script = downloadScriptInstaller(scannerDir, url, token, username, password);
-      executeInstaller(script, url, token, username, password);
+      executeInstaller(script, token, username, password);
+      updateCredentials(scannerDir, url, token, username, password);
       executeScanner(command, scannerDir);
 
     } catch(Throwable e) {
@@ -146,29 +146,48 @@ public class XygeniGitHubAction {
     log.info("Scanner action  completed successfully.");
   }
 
-  private static void executeInstaller(File script, String url, String token, String username, String password) throws IOException, InterruptedException, TimeoutException {
+  private static void updateCredentials(String scannerDir, String url, String token, String username, String password) throws IOException {
+    File configFile = new File(scannerDir, XYGENI_CONF_PATH);
+    File tmpFile = new File(scannerDir, XYGENI_CONF_PATH + ".tmp");
+    Files.move(configFile.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    List<String> lines = Files.readAllLines(tmpFile.toPath());
+    List<String> outLines = new ArrayList<>();
+
+    boolean isInApi = false;
+    for (String line : lines) {
+      if(!line.startsWith(" ")) isInApi = false;
+      if(line.startsWith("api:")) isInApi = true;
+      if(isInApi) {
+        if(line.trim().startsWith("url:") && isNotBlank(url)) {
+          line = "  url: " + url;
+        }
+        if(line.trim().startsWith("username:") && isNotBlank(username)) {
+          line = "  username: " + username;
+        }
+        if(line.trim().startsWith("password:") && isNotBlank(password)) {
+          line = "  password: " + password;
+        }
+        if(line.trim().startsWith("apikey:") && isNotBlank(token)) {
+          line = "  apikey: " + token;
+        }
+      }
+      outLines.add(line);
+    }
+    Files.write(configFile.toPath(), outLines);
+  }
+
+  private static void executeInstaller(File script, String token, String username, String password) throws IOException, InterruptedException, TimeoutException {
     String[] command;
     if(isNotBlank(token) && token.startsWith("xya_")){
-      command = new String[]{script.getAbsolutePath(), "-o", "-t", token};
+      command = new String[]{script.getAbsolutePath(), "-o", "-t", token, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }else{
-      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password};
+      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }
     new ProcessExecutor()
         .directory(script.getParentFile())
         .command(command).timeout(60, TimeUnit.MINUTES)
         .redirectError(Slf4jStream.of(log).asWarn())
         .redirectOutput(Slf4jStream.of(log).asInfo()).execute();
-  }
-
-  private static void unzipScanner(String scannerDir) throws IOException {
-    Path zipScanner = Path.of(ZIP_FILE);
-    Path targetDir = Path.of(scannerDir); // the working dir is GITHUB_WORKSPACE
-    unzipFile(zipScanner, targetDir);
-
-    // New layout: the scanner zipfile uses a directory xygeni_scanner. xygeni is the bash executable
-    File executable = new File(scannerDir, XYGENI_SCANNER_DIR+"/xygeni");
-    //noinspection ResultOfMethodCallIgnored
-    executable.setExecutable(true);
   }
 
   private static void executeScanner(Command command, String scannerDir) throws IOException, InterruptedException, TimeoutException {

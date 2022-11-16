@@ -19,6 +19,8 @@
         <slf4j.version>1.7.36</slf4j.version>
         <zt-exec.version>1.12</zt-exec.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+
+        <junit.version>5.7.2</junit.version>
     </properties>
 
     <dependencies>
@@ -47,6 +49,19 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
