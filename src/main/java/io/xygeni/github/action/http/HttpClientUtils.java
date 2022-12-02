@@ -131,9 +131,9 @@ public class HttpClientUtils {
   public InputStream downloadScript(DepsDoctorConfig config) throws URISyntaxException, IOException, InterruptedException {
     HttpRequest request;
     if(OS.isWindows()) {
-      request = getRequestBuilder("/latest/scanner/powershell", config).GET().build();
+      request = getRequestBuilder("/latest/scanner/install.ps1", config).GET().build();
     } else {
-      request = getRequestBuilder("/latest/scanner/bash", config).GET().build();
+      request = getRequestBuilder("/latest/scanner/install.sh", config).GET().build();
     }
     return client(config).send(request, HttpResponse.BodyHandlers.ofInputStream()).body();
   }
