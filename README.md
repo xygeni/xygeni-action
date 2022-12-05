@@ -25,7 +25,9 @@ The `xygeni-action` downloads, configures and executes the Xygeni Scanner on the
 
 ### Setting API token as encrypted secret in GitHub
 
-The scanner needs an *API token* to communicate with the Xygeni platform. Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+The scanner needs an *API token* to communicate with the Xygeni platform. To register in the Xygeni platform, please register in the [xygeni.io](https://xygeni.io/book-a-demo). 
+
+Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
 ![](images/i01_secret.png)
 
@@ -64,7 +66,7 @@ gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
 gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
 ```
 
-You may use the corresponding 
+You may use the corresponding GitHub webpages for setting the api token as a secret named `XYGENI_TOKEN` at the appropriate scope.
 
 ### Add a step calling the action to a workflow
 
