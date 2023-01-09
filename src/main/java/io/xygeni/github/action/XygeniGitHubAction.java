@@ -219,6 +219,14 @@ public class XygeniGitHubAction {
     api.setPassword(password);
     config.setApi(api);
 
+    File dir = new File(scannerDir);
+    if(!dir.exists()) {
+      log.info("Directory {} does not exist", scannerDir);
+      boolean created = dir.mkdirs();
+      if(created) log.info("Directory {} created", scannerDir);
+      else log.error("can not create directory {} ", scannerDir);
+    }
+
     InputStream is = new HttpClientUtils().downloadScript(config);
     if(OS.isWindows()) {
       File psFile = new File(scannerDir, PS_FILE);
