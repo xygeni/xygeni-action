@@ -235,6 +235,7 @@ public class XygeniGitHubAction {
     }else{
       File shFile = new File(scannerDir, SH_FILE);
       Files.copy(is, shFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      shFile.setExecutable(true);
       return shFile;
     }
   }
