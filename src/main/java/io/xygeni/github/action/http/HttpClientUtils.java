@@ -27,6 +27,8 @@ public class HttpClientUtils {
   private static final String RELEASE_ZIP = "deps-doctor-release.zip";
   public static final String AUTHORIZATION = "Authorization";
 
+  private static final String STATIC_BASE_URL = "https://get.xygeni.io";
+
   private static HttpClient httpClient;
 
   public InputStream downloadScanner(DepsDoctorConfig config) throws Exception {
@@ -50,6 +52,19 @@ public class HttpClientUtils {
     } else {
       throw new IllegalArgumentException("Either token or username/password must be provided");
     }
+
+    ProxyConfig proxy = config.getProxy();
+    if(proxy.isActive() && !isBlank(proxy.getUsername())) {
+      String userPass = proxy.getUsername() + ":" + proxy.getPassword();
+      String encoded = Base64.getEncoder().encodeToString(userPass.getBytes());
+      builder.setHeader("Proxy-Authorization", "Basic " + encoded);
+    }
+    return builder;
+  }
+
+  private Builder getRequestBuilderStatic(String uri, DepsDoctorConfig config) throws URISyntaxException {
+    URI url = getUri(STATIC_BASE_URL, uri);
+    Builder builder = HttpRequest.newBuilder(url);
 
     ProxyConfig proxy = config.getProxy();
     if(proxy.isActive() && !isBlank(proxy.getUsername())) {
@@ -131,9 +146,9 @@ public class HttpClientUtils {
   public InputStream downloadScript(DepsDoctorConfig config) throws URISyntaxException, IOException, InterruptedException {
     HttpRequest request;
     if(OS.isWindows()) {
-      request = getRequestBuilder("/latest/scanner/install.ps1", config).GET().build();
+      request = getRequestBuilderStatic("/latest/scanner/install.ps1", config).GET().build();
     } else {
-      request = getRequestBuilder("/latest/scanner/install.sh", config).GET().build();
+      request = getRequestBuilderStatic("/latest/scanner/install.sh", config).GET().build();
     }
     return client(config).send(request, HttpResponse.BodyHandlers.ofInputStream()).body();
   }
