@@ -21,3 +21,5 @@ jobs:
           password: ${{ secrets.SEC_P }}
           # token: ${{ secrets.XYGENI_TOKEN }}
           project: testingRetro
+          # Only for testing
+          xygeni_url: 'https://apidev.xygeni.io/deps-doctor-service'
