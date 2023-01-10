@@ -41,7 +41,7 @@ runs:
   steps:
     - name: 'Download Xygeni Scanner docker image'
       shell: bash
-      run: docker pull -q xygeni/xygeni_scanner:latest
+      run: docker pull xygeni/xygeni_scanner:latest
 
     - name: 'Start Xygeni Scanner docker image'
       shell: bash
