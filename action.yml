@@ -45,4 +45,4 @@ runs:
 
     - name: 'Start Xygeni Scanner docker image'
       shell: bash
-      run: docker run -it -v ${{ inputs.directory }}:/app -e XYGENI_TOKEN=${{ inputs.token }} -e XYGENI_USERNAME=${{ inputs.username }} -e XYGENI_PASSWORD=${{ inputs.password }} -e XYGENI_SERVER=${{ inputs.xygeni_url }} -t xygeni ${{ inputs.command }}
+      run: docker run -v ${{ inputs.directory }}:/app -e XYGENI_TOKEN=${{ inputs.token }} -e XYGENI_USERNAME=${{ inputs.username }} -e XYGENI_PASSWORD=${{ inputs.password }} -e XYGENI_SERVER=${{ inputs.xygeni_url }} -t xygeni ${{ inputs.command }}
