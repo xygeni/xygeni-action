@@ -119,27 +119,20 @@ The available parameters for the action are:
 | token                | API token                                                                                                                                                      | false     |                                |
 | username             | Xygeni account's username. Not recommended, use token instead.                                                                                                 | false     |                                |
 | password             | Xygeni account's password. Not recommended, use token instead.                                                                                                 | false     |                                |
-| run                  | Comma-separated scans to run: any, deps, secrets, misconf, codetamper, iac, compliance (all if not specified)                                           | false     |                                |
-| include              | Include patterns, comma-separated                                                                                                                              | false     |                                |
-| exclude              | Exclude patterns, comma-separated. Example: "**/test/**"                                                                                                       | false     |                                |
-| output               | Output file template (filename will be prefixed by "SCAN"). Use "stdout" or "-" for standard output, "stderr" for standard error.                              | false     |                                |
-| format               | Output format: none, text, json, csv                                                                                                                           | false     | none                           |
-| columns              | Report columns, as --cols SCAN=col1,col2,...                                                                                                                   | false     | From config for each scan type |
-| code                 | If true, report code blocks or sensitive text, if false the code will be obfuscated                                                                            | false     | true                           |
-| conf                 | Configuration filepath template (filename will be prefixed by "SCAN")                                                                                          | false     |                                |
-| baseline             | Baseline filepath template (filename will be prefixed by "SCAN")                                                                                               | false     |                                |
-| custom_detectors_dir | Directory with custom detectors                                                                                                                                | false     |                                |
-| detectors            | SCAN=list, comma-separated list of IDs for detectors to run, severity or "all"                                                                                 | false     |                                |
-| skip_detectors       | SCAN=list, comma-separated list of IDs for detectors to ignore, or severity                                                                                    | false     |                                |
-| sbom                 | SBOM file to generate. Use "stdout" or "-" for standard output, "stderr" for standard error                                                                    | false     |                                |
-| sbom_format          | SBOM format: cyclonedx, spdx, swid                                                                                                                             | false     |                                |
-| secrets_mode         | (Secrets) scan mode: scan, diff, history                                                                                                                       | false     | scan                           |
-| standard             | (Compliance) ID of the standard to check                                                                                                                       | false     | From config file               |
-| fail_on              | When the action fails: "never" (always exit with code 0, default value), list of rules, like (severity:SEV ... shortcuts) that will force a non-zero exit code | false     | never                          | 
-| try_all_scans        | Try all scans, even after a scan failure or error                                                                                                              | false     | false                          |
+| Command              | Command to execute by the scanner  | false     |  scan --never-fail -n ${{ github.repository }} -d /app |
 
+> **Tip:** Use `--never-fail` to avoid breaking the build if the scan finds issues or fails.
+> You may also use `--fail-on=severity:critical` to terminate the build only when critical issues are found.
 
-> **Tip:** Use `fail_on = never` to avoid breaking the build if the scan finds issues or fails.
-> You may also use `fail_on = severity:critical` to terminate the build only when critical issues are found.
+> **Tip:** Use `--run=secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
 
-> **Tip:** Use `run = secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
+Example for scanning only hard-coded secrets and IaC flaws detectors, and failing the build only when critical issues are found:
+
+```yaml
+  - name: Xygeni-Scanner
+    uses: xygeni/xygeni-action@v2.0
+    id: Xygeni-Scanner
+    with:
+      token: ${{ secrets.XYGENI_TOKEN }}
+      command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=severity:critical
+```
