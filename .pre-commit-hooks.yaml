@@ -1,0 +1,21 @@
+# For use
+- id: xygeni
+  name: xygeni (script)
+  description: Runs Xygeni scanner as a script
+  stages: [commit]
+  entry: xygeni
+  args: ['-q', 'scan', '--format=text', '--run=secrets,suspectdeps,misconf,iac,codetamper,compliance', '--fail-on=severity:critical']
+  language: script
+  pass_filenames: false
+  always_run: true
+
+- id: xygeni-docker
+  name: xygeni (docker)
+  description: Runs Xygeni scanner docker image
+  stages: [commit]
+  language: docker
+  entry: -e XYGENI_TOKEN xygeni/xygeni_scanner:latest
+  args: ['-q', 'scan', '--format=text', '--run=secrets,suspectdeps,misconf,iac,codetamper,compliance', '--fail-on=severity:critical']
+  pass_filenames: false
+  always_run: true
+
