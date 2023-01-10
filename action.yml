@@ -10,14 +10,6 @@ inputs:
     description: 'Base URL of the Xygeni API.'
     required: false
     default: 'https://api.xygeni.io'
-  project:
-    description: 'Project name, default: ${github.repository}'
-    required: false
-    default: ${{ github.repository }}
-  directory:
-    description: 'The directory to analyze, default: ${github.workspace}'
-    required: false
-    default: ${{ github.workspace }}
   token:
     description: 'API token. Must be provided, or username/password as alternative.'
     required: false
@@ -30,7 +22,7 @@ inputs:
   command:
     description: 'Command to execute by the scanner'
     required: false
-    default: 'scan'
+    default: 'scan -n ${{ github.repository }} -d /app'
 
 branding:
   color: 'green'
