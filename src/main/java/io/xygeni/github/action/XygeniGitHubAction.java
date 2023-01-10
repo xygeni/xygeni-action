@@ -179,9 +179,9 @@ public class XygeniGitHubAction {
   private static void executeInstaller(File script, String token, String username, String password, String apiUrl) throws IOException, InterruptedException, TimeoutException {
     String[] command;
     if(isNotBlank(token) && token.startsWith("xya_")){
-      command = new String[]{script.getAbsolutePath(), "-o", "-t", token, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
+      command = new String[]{script.getAbsolutePath(), "-o", "-v", "-t", token, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }else{
-      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
+      command = new String[]{script.getAbsolutePath(), "-o", "-v", "-u", username, "-p", password, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }
     new ProcessExecutor()
         .directory(script.getParentFile())
