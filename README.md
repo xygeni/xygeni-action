@@ -114,17 +114,17 @@ The available parameters for the action are:
 | Parameter            | Description                                                                                                                                                    | Mandatory | Default value                  |
 |----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|--------------------------------|
 | xygeni_url           | Base URL of the Xygeni API.                                                                                                                                    | false     | https://api.xygeni.com         |
-| project              | Project name                                                                                                                                                   | false     | ${{ github.repository }}       |
-| directory            | Directory to analyze                                                                                                                                           | false     | ${{ github.workspace }}        |
 | token                | API token                                                                                                                                                      | false     |                                |
 | username             | Xygeni account's username. Not recommended, use token instead.                                                                                                 | false     |                                |
 | password             | Xygeni account's password. Not recommended, use token instead.                                                                                                 | false     |                                |
-| Command              | Command to execute by the scanner  | false     |  scan --never-fail -n ${{ github.repository }} -d /app |
+| command              | Command to execute by the scanner  | false     |  scan --never-fail -n ${{ github.repository }} -d /app |
 
 > **Tip:** Use `--never-fail` to avoid breaking the build if the scan finds issues or fails.
 > You may also use `--fail-on=severity:critical` to terminate the build only when critical issues are found.
 
 > **Tip:** Use `--run=secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
+
+> **Tip** If you want analyze a subdirectory, you can configure the command with `-d` parameter starting with `/app/{YOUR PATH IN THE APPLICATION}`.
 
 Example for scanning only hard-coded secrets and IaC flaws detectors, and failing the build only when critical issues are found:
 
