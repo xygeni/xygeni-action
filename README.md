@@ -17,19 +17,21 @@ GitHub Action for Xygeni Scanner.
 [GitHub Actions](https://docs.github.com/en/actions) are a platform for continuous integration in GitHub repositories. 
 An action encodes a reusable task with configurable parameters.
 
-Xygeni provides a `xygeni-action` for downloading and running the scanner on the repository.
+Xygeni provides a `xygeni-action` for downloading and running the scanner as a step in a GitHub workflow.
 
 ## Usage
 
-The `xygeni-action` action downloads, configures and executes the Xygeni Scanner on the repository where the action is invoked. 
+The `xygeni-action` downloads, configures and executes the Xygeni Scanner on the repository where the action is invoked. 
 
 ### Setting API token as encrypted secret in GitHub
 
-The scanner needs an *API token* to communicate with the Xygeni platform. Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+The scanner needs an *API token* to communicate with the Xygeni platform. To register in the Xygeni platform, please register in the [xygeni.io](https://xygeni.io/book-a-demo). 
+
+Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
 ![](images/i01_secret.png)
 
-For example, to register the API token as a secret named `XYGENI_TOKEN`, for repository in the current working directory. you may use the GitHub `gh` command:
+For example, to register the API token as a secret named `XYGENI_TOKEN`, for the repository in the current working directory, you may use the GitHub `gh` command:
 
 ```shell
 # The command will prompt you to enter the secret value
@@ -64,6 +66,8 @@ gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
 gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
 ```
 
+You may use the corresponding GitHub webpages for setting the api token as a secret named `XYGENI_TOKEN` at the appropriate scope.
+
 ### Add a step calling the action to a workflow
 
 In a GitHub workflow (`.github/*.yml`) the Xygeni scanner could be run on the repository files, 
@@ -86,10 +90,10 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@vv3.1.0
         
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v1
+        uses: xygeni/xygeni-action@v1.0.0
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
