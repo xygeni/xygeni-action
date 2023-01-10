@@ -90,10 +90,10 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        uses: actions/checkout@vv3.1.0
+        uses: actions/checkout@v3.1.0
         
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v1.0.0
+        uses: xygeni/xygeni-action@v2.0
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
