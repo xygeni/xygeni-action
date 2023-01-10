@@ -131,7 +131,7 @@ public class XygeniGitHubAction {
 
     try {
       File script = downloadScriptInstaller(scannerDir, url, token, username, password);
-      executeInstaller(script, token, username, password);
+      executeInstaller(script, token, username, password, url);
       updateCredentials(scannerDir, url, token, username, password);
       executeScanner(command, scannerDir);
 
@@ -176,12 +176,12 @@ public class XygeniGitHubAction {
     Files.write(configFile.toPath(), outLines);
   }
 
-  private static void executeInstaller(File script, String token, String username, String password) throws IOException, InterruptedException, TimeoutException {
+  private static void executeInstaller(File script, String token, String username, String password, String apiUrl) throws IOException, InterruptedException, TimeoutException {
     String[] command;
     if(isNotBlank(token) && token.startsWith("xya_")){
-      command = new String[]{script.getAbsolutePath(), "-o", "-t", token, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
+      command = new String[]{script.getAbsolutePath(), "-o", "-t", token, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }else{
-      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
+      command = new String[]{script.getAbsolutePath(), "-o", "-u", username, "-p", password, "-s", apiUrl, "-d", script.getParentFile().getAbsolutePath() + "/" + XYGENI_SCANNER_DIR};
     }
     new ProcessExecutor()
         .directory(script.getParentFile())
