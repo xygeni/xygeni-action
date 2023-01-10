@@ -90,7 +90,7 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        uses: actions/checkout@vv3.1.0
+        uses: actions/checkout@v3.1.0
         
       - name: Xygeni-Scanner
         uses: xygeni/xygeni-action@v2.0
