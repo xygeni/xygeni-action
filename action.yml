@@ -22,7 +22,7 @@ inputs:
   command:
     description: 'Command to execute by the scanner'
     required: false
-    default: 'scan -n ${{ github.repository }} -d /app'
+    default: 'scan --never-fail -n ${{ github.repository }} -d /app'
 
 branding:
   color: 'green'
