@@ -13,6 +13,9 @@ inputs:
   token:
     description: 'API token. Must be provided, or username/password as alternative.'
     required: false
+  gh_token:
+    description: 'GitHub token to retrieve repository information for misconfigurations and compliance.'
+    required: false
   username:
     description: 'Username (using API token is recommended)'
     required: false
@@ -37,4 +40,4 @@ runs:
 
     - name: 'Start Xygeni Scanner docker image'
       shell: bash
-      run: docker run -v ${{ github.workspace }}:/app -e XYGENI_TOKEN=${{ inputs.token }} -e XYGENI_USERNAME=${{ inputs.username }} -e XYGENI_PASSWORD=${{ inputs.password }} -e XYGENI_SERVER=${{ inputs.xygeni_url }} -t xygeni/xygeni_scanner ${{ inputs.command }}
+      run: docker run -v ${{ github.workspace }}:/app -e XYGENI_TOKEN=${{ inputs.token }} -e GITHUB_TOKEN=${{ inputs.gh_token }} -e XYGENI_USERNAME=${{ inputs.username }} -e XYGENI_PASSWORD=${{ inputs.password }} -e XYGENI_SERVER=${{ inputs.xygeni_url }} -t xygeni/xygeni_scanner ${{ inputs.command }}
