@@ -114,6 +114,7 @@ The available parameters for the action are:
 | Parameter            | Description                                                                                                                                                    | Mandatory | Default value                  |
 |----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|--------------------------------|
 | xygeni_url           | Base URL of the Xygeni API.                                                                                                                                    | false     | https://api.xygeni.com         |
+| gh_token             | GitHub token to retrieve repository information for misconfigurations and compliance. | false | |
 | token                | API token                                                                                                                                                      | false     |                                |
 | username             | Xygeni account's username. Not recommended, use token instead.                                                                                                 | false     |                                |
 | password             | Xygeni account's password. Not recommended, use token instead.                                                                                                 | false     |                                |
