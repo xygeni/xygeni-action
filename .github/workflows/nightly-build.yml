@@ -1,0 +1,29 @@
+# This workflow will scan this repo with the Xygeni Scanner
+
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  scan-test:
+    runs-on: ubuntu-latest
+    name: xygeni-github-action
+
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Xygeni-Scanner
+        uses: xygeni/xygeni-action@77ac75ae0cee5d6df93e8e449eb39ec208f2d3b3
+        id: Xygeni-Scanner
+        with:
+         command: scan -d /app --never-fail
+         token: ${{ secrets.XYGENI_TOKEN }}
+         gh_token: ${{ secrets.GITHUB_TOKEN }}
