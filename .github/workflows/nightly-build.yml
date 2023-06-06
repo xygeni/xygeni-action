@@ -17,6 +17,8 @@ jobs:
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Xygeni-Scanner
         uses: xygeni/xygeni-action@77ac75ae0cee5d6df93e8e449eb39ec208f2d3b3
