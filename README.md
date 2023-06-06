@@ -137,3 +137,5 @@ Example for scanning only hard-coded secrets and IaC flaws detectors, and failin
       token: ${{ secrets.XYGENI_TOKEN }}
       command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=severity:critical
 ```
+
+
