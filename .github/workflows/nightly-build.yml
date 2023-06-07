@@ -26,4 +26,4 @@ jobs:
         with:
          command: scan -d /app --never-fail
          token: ${{ secrets.XYGENI_TOKEN }}
-         gh_token: ${{ secrets.GITHUB_TOKEN }}
+         gh_token: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
