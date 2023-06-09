@@ -38,16 +38,10 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - name: 'Download & Install Xygeni Scanner by using the Token'
-      if: github.event.inputs.token != ''
+    - name: 'Download & Install Xygeni Scanner'
       shell: bash
-      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -t ${{ inputs.token }} -s ${{ inputs.xygeni_url }}
+      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -t "${{ inputs.token }}" -u "${{ inputs.username }}" -p "${{ inputs.password }}" -s ${{ inputs.xygeni_url }}
     
-    - name: 'Download & Install Xygeni Scanner by using the Basic Auth'
-      if: github.event.inputs.token == ''
-      shell: bash
-      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -u ${{ inputs.username }} -p ${{ inputs.password }} -s ${{ inputs.xygeni_url }}
-
     - name: 'Run Xygeni Scanner'
       shell: bash
       run: $HOME/.xygeni/xygeni ${{ inputs.command }} -d ${{ github.workspace }}
