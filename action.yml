@@ -13,19 +13,23 @@ inputs:
   token:
     description: 'API token. Must be provided, or username/password as alternative.'
     required: false
-  gh_token:
-    description: 'GitHub token to retrieve repository information for misconfigurations and compliance.'
-    required: false
+    default: ''
   username:
     description: 'Username (using API token is recommended)'
     required: false
+    default: ''
   password:
     description: 'Password (using API token is recommended)'
     required: false
+    default: ''
   command:
     description: 'Command to execute by the scanner'
     required: false
-    default: 'scan --never-fail -n ${{ github.repository }} -d /app'
+    default: 'scan --never-fail'
+  gh_token:
+    description: 'GitHub token to retrieve repository information for misconfigurations and compliance.'
+    required: false
+    default: $GITHUB_TOKEN
 
 branding:
   color: 'green'
@@ -34,10 +38,18 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - name: 'Download Xygeni Scanner docker image'
+    - name: 'Download & Install Xygeni Scanner by using the Token'
+      if: github.event.inputs.token != ''
       shell: bash
-      run: docker pull xygeni/xygeni_scanner:latest
+      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -t ${{ inputs.token }} -s ${{ inputs.xygeni_url }}
+    
+    - name: 'Download & Install Xygeni Scanner by using the Basic Auth'
+      if: github.event.inputs.token == ''
+      shell: bash
+      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -u ${{ inputs.username }} -p ${{ inputs.password }} -s ${{ inputs.xygeni_url }}
 
-    - name: 'Start Xygeni Scanner docker image'
+    - name: 'Run Xygeni Scanner'
       shell: bash
-      run: docker run -v ${{ github.workspace }}:/app -e XYGENI_TOKEN=${{ inputs.token }} -e GITHUB_TOKEN=${{ inputs.gh_token }} -e XYGENI_USERNAME=${{ inputs.username }} -e XYGENI_PASSWORD=${{ inputs.password }} -e XYGENI_SERVER=${{ inputs.xygeni_url }} -t xygeni/xygeni_scanner ${{ inputs.command }}
+      run: $HOME/.xygeni/xygeni ${{ inputs.command }} -d ${{ github.workspace }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.gh_token }}
