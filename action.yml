@@ -50,6 +50,6 @@ runs:
 
     - name: 'Run Xygeni Scanner'
       shell: bash
-      run: $HOME/.xygeni/xygeni ${{ inputs.command }} -d ${{ github.repository }}
+      run: $HOME/.xygeni/xygeni ${{ inputs.command }} -d ${{ github.workspace }}
       env:
         GITHUB_TOKEN: ${{ inputs.gh_token }}
