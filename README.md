@@ -90,10 +90,16 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        uses: actions/checkout@v3.1.0
+        # You may instead pin an action SHA, like this: 
+        # uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+        uses: actions/checkout@v3.5.3
+        with:
+          # The default depth of 1 commit is not enough for some scans 
+          fetch-depth: 0
         
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v2.0
+        # Pinned: xygeni/xygeni@4e94e5ea737f5ebfedac8b1a5b75d8c60c21932d
+        uses: xygeni/xygeni-action@v2.1
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
@@ -125,7 +131,7 @@ The available parameters for the action are:
 
 > **Tip:** Use `--run=secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
 
-> **Tip** If you want analyze a subdirectory, you can configure the command with `-d` parameter starting with `/app/{YOUR PATH IN THE APPLICATION}`.
+> **Tip** If you want to analyze a subdirectory, you can configure the command with `-d` parameter starting with `/app/{YOUR PATH IN THE APPLICATION}`.
 
 Example for scanning only hard-coded secrets and IaC flaws detectors, and failing the build only when critical issues are found:
 
@@ -135,5 +141,5 @@ Example for scanning only hard-coded secrets and IaC flaws detectors, and failin
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}
-      command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=severity:critical
+      command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=critical
 ```
