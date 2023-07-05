@@ -99,7 +99,7 @@ jobs:
         
       - name: Xygeni-Scanner
         # Pinned: xygeni/xygeni@4e94e5ea737f5ebfedac8b1a5b75d8c60c21932d
-        uses: xygeni/xygeni-action@v2.1
+        uses: xygeni/xygeni-action@v3.2.0
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
@@ -139,7 +139,7 @@ Example for scanning only code tampering, hard-coded secrets and IaC flaws detec
 
 ```yaml
   - name: Xygeni-Scanner
-    uses: xygeni/xygeni-action@v2.0
+    uses: xygeni/xygeni-action@v3.2.0
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}
