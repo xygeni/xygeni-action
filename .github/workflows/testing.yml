@@ -17,12 +17,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
+
 
     - name: Xygeni-Scanner-LabDev
       uses: xygeni/xygeni-action@4e94e5ea737f5ebfedac8b1a5b75d8c60c21932d
