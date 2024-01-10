@@ -57,3 +57,10 @@ jobs:
           name: iac.XygeniAction.json
           path: ./iac.XygeniAction.json
           retention-days: 1
+    - name: Upload scan report result (malware)
+      uses: actions/upload-artifact@v3
+      with:
+          name: malware.XygeniAction.json
+          path: ./malware.XygeniAction.json
+          retention-days: 1
+          
