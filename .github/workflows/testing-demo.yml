@@ -5,13 +5,13 @@ name: Testing-Demo
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 20 * * *'
   workflow_dispatch:
 
 jobs:
   xygeni-scan:
   
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
   
     steps:
     - uses: actions/checkout@v2
