@@ -28,37 +28,37 @@ jobs:
         gh_token: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
         xygeni_url: https://apidev.xygeni.io/deps-doctor-service
     - name: Upload scan report result (deps)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: deps.XygeniAction.json
           path: ./deps.XygeniAction.json
           retention-days: 1
     - name: Upload scan report result (suspectdeps)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: suspectdeps.XygeniAction.json
           path: ./suspectdeps.XygeniAction.json
           retention-days: 1
     - name: Upload scan report result (secrets)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: secrets.XygeniAction.json
           path: ./secrets.XygeniAction.json
           retention-days: 1
     - name: Upload scan report result (misconf)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: misconf.XygeniAction.json
           path: ./misconf.XygeniAction.json
           retention-days: 1
     - name: Upload scan report result (iac)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: iac.XygeniAction.json
           path: ./iac.XygeniAction.json
           retention-days: 1
     - name: Upload scan report result (malware)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
       with:
           name: malware.XygeniAction.json
           path: ./malware.XygeniAction.json
