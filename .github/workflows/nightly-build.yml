@@ -32,9 +32,9 @@ jobs:
         id: tokenid
         run: |
           wget --header="User-Agent: actions/oidc-client" \
-          --header="Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-          -O response.json \
-          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sigstore"
+            --header="Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            -O response.json \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sigstore"
           
           value=$(jq -r '.value' < response.json)
           echo "OIDC_TOKEN=${value}" >> $GITHUB_ENV
