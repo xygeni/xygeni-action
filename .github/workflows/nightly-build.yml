@@ -29,20 +29,17 @@ jobs:
          gh_token: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
 
       - name: Obtain OIDC Token
-        id: tokenid
-        run: |
-          wget --header="User-Agent: actions/oidc-client" \
-            --header="Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            -O response.json \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sigstore"
-          
-          value=$(jq -r '.value' < response.json)
-          echo "OIDC_TOKEN=${value}" >> $GITHUB_ENV
+        uses: actions/github-script@v8
+        id: oidc-token
+        with:
+          script: |
+            return await core.getIDToken('sigstore')
+          result-encoding: string
 
       - name: salt
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
-          SIGSTORE_ID_TOKEN: ${{ env.OIDC_TOKEN }}
+          SIGSTORE_ID_TOKEN: ${{ steps.oidc-token.outputs.result }}
           XYGENI_TOKEN: ${{ secrets.XYGENI_TOKEN }}
         run: |
           # download zipfile
