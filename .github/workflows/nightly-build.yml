@@ -11,6 +11,8 @@ jobs:
   scan-test:
     runs-on: ubuntu-latest
     name: xygeni-github-action
+    permissions:
+      id-token: write
 
     steps:
       # To use this repository's private action,
