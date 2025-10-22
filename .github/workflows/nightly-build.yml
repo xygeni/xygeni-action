@@ -24,6 +24,37 @@ jobs:
         uses: xygeni/xygeni-action@77ac75ae0cee5d6df93e8e449eb39ec208f2d3b3
         id: Xygeni-Scanner
         with:
-         command: scan -d /app --never-fail
+         command: scan -d /app --never-fail --sbom=stdout --sbom-format=spdx
          token: ${{ secrets.XYGENI_TOKEN }}
          gh_token: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
+
+      - name: Obtain OIDC Token
+        uses: actions/github-script@v8
+        id: oidc-token
+        with:
+          script: |
+            return await core.getIDToken('sigstore')
+          result-encoding: string
+
+      - name: salt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_FOR_DOGFOODING }}
+          SIGSTORE_ID_TOKEN: ${{ steps.oidc-token.outputs.result }}
+          XYGENI_TOKEN: ${{ secrets.XYGENI_TOKEN }}
+        run: |
+          # download zipfile
+          curl -sLO https://get.xygeni.io/latest/salt/salt.zip
+
+          # verify integrity
+          SALT_CHECKSUM=$(curl -s https://raw.githubusercontent.com/xygeni/xygeni/main/checksum/latest/salt.zip.sha256)
+          echo "$SALT_CHECKSUM salt.zip" | sha256sum --check
+
+          # unzip
+          unzip salt.zip -d salt_home
+
+          # run
+          salt_home/xygeni_salt/salt -nb attestation provenance --basedir . --pipeline run_salt_demo \
+            --name sources --file action.yml \
+            --keyless --certificate=output/ephemeral_cert.crt \
+            -o ./provenance.signed.json --output-unsigned=./provenance.json \
+            --pretty-print

@@ -145,3 +145,9 @@ Example for scanning only code tampering, hard-coded secrets and IaC flaws detec
       token: ${{ secrets.XYGENI_TOKEN }}
       command: scan -n ${{ github.repository }} -d /app --run=codetamper,secrets,iac --fail-on=critical
 ```
+
+# Security
+
+Xygeni-action follows good security practices, but 100% security cannot be assured. Xygeni-action is provided **"as is"** without any **warranty**. Use at your own risk.
+
+For more information and to report security issues, please refer to our [security documentation](SECURITY.md)
