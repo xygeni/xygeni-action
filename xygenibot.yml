@@ -1,0 +1,197 @@
+deps:
+  # Pull request strategy:
+  # always: always create the PR.
+  # no-duplicate: create PR only if not exists a PR with the same component, version and fix version (open or close).
+  # create-if-close: create PR if not exists a PR with the same component, version and fix version or this is closed (default value).
+  pull-request-strategy: 'create-if-close'
+
+  # Dependencies filter to include/exclude dependencies
+  filter-includes:
+    - group: '*'
+      name: '*'
+  filter-excludes:
+    - group: '*'
+      name: '*'
+
+  # Dependencies for bumping
+  # direct: only direct dependencies
+  # indirect: only indirect dependencies
+  # in-app-code: only dependencies that will be part of the application, that is, those dependencies for development or testing will be excluded.
+  # with-vulnerabilities: only dependencies with known vulnerabilities
+  dependency-types:
+    - 'direct'
+    - 'indirect'
+    - 'in-app-code'
+    - 'with-vulnerabilities'
+
+  # Bumping version strategies:
+  # all: bump to the latest version for the component.
+  # minor: bump with the same major version (for example 1.x.x -> max version less than 2.0.0).
+  # patch: bump with the same major and minor versions (for example 1.1.x -> max version less than 1.2.0).
+  # without-vulnerabilities: bump to the first version without vulnerabilities
+  # compatible: bump with max version compatible with the current (unsupported for private repositories).
+  # exclude-pre-release: pre-release will be excluded for the bump version.
+  bumping-version-strategies:
+    - 'all'
+    - 'minor'
+    - 'patch'
+    - 'without-vulnerabilities'
+    - 'compatible'
+    - 'exclude-pre-release'
+
+  #Only use the repositories configured in 'repositories' section
+  only-use-repositories-configured: false
+
+  # Repositories to find component versions
+  repositories:
+    - type: 'maven'
+      url: 'https://.....'
+      directory: '/home/.m2/repository'
+      username: ....
+      password: '${pass}'
+
+  # Configuration by package manager (maven, npm, pypi,...)
+  package-managers:
+    - type: 'maven'
+      # Pull request strategy:
+      # always: always create the PR.
+      # no-duplicate: create PR only if not exists a PR with the same component, version and fix version (open or close).
+      # create-if-close: create PR if not exists a PR with the same component, version and fix version or this is closed (default value).
+      pull-request-strategy: 'create-if-close'
+
+      # Dependencies filter to include/exclude dependencies
+      filter-includes:
+        - group: '*'
+          name: '*'
+      filter-excludes:
+        - group: '*'
+          name: '*'
+
+      # Dependencies for bumping
+      # direct: only direct dependencies
+      # indirect: only indirect dependencies
+      # in-app-code: only dependencies that will be part of the application, that is, those dependencies for development or testing will be excluded.
+      # with-vulnerabilities: only dependencies with known vulnerabilities
+      dependency-types:
+        - 'direct'
+        - 'indirect'
+        - 'in-app-code'
+        - 'with-vulnerabilities'
+
+      # Bumping version strategies:
+      # all: bump to the latest version for the component.
+      # minor: bump with the same major version (for example 1.x.x -> max version less than 2.0.0).
+      # patch: bump with the same major and minor versions (for example 1.1.x -> max version less than 1.2.0).
+      # compatible: bump with max version compatible with the current (unsupported for private repositories).
+      # exclude-pre-release: pre-release will be excluded for the bump version.
+      bumping-version-strategies:
+        - 'all'
+        - 'minor'
+        - 'patch'
+        - 'compatible'
+        - 'exclude-pre-release'
+
+      #Only use the repositories configured in 'repositories' section
+      only-use-repositories-configured: false
+
+      # Repositories to find component versions
+      repositories:
+        - type: 'maven'
+          url: 'https://.....'
+          directory: '/home/.m2/repository'
+          username: ....
+          password: '${pass}'
+
+sast:
+  # Pull request strategy:
+  # always: always create the PR.
+  # no-duplicate: create PR only if not exists a PR with the same component, version and fix version (open or close).
+  # create-if-close: create PR if not exists a PR with the same component, version and fix version or this is closed (default value).
+  pull-request-strategy: 'always'
+
+  # Max pull request created:
+  max-pull-request: 0
+
+  # Files filter to include/exclude vulnerabilities remediation
+  # filter-includes: list of glob patterns to include to remediate vulnerabilities.
+  #
+  # A pattern could use ** (to match zero or more directories), * (zero or more characters
+  # in a directory or file name), and ? (one character).
+  # Examples: **/*.java matches all files with 'java' extension. **/java/** matches all files under any java directory.
+  #
+  # If empty, ALL files will be matched.
+  #
+  # A file is analyzed when matched by 'filter-includes' AND NOT matched by 'filter-excludes'.
+  filter-includes:
+
+  # filter-excludes: list of glob patterns to exclude to remediate vulnerabilities.
+  # If empty, NO file will be excluded
+  filter-excludes:
+
+  # Vulnerabilities to remediate
+  # in-app-code: only vulnerabilities that will be part of the application, that is, those vulnerabilities for development or testing will be excluded.
+  tags:
+    - 'in-app-code'
+
+  # Languages of vulnerabilities to remediate
+  languages:
+    - 'java'
+    - 'javascript'
+    - 'php'
+    - 'python'
+
+  # severities of vulnerabilities to remediate
+  severities:
+    - 'critical'
+    - 'high'
+    - 'low'
+    - 'info'
+
+  # list of ruleId to include to remediate vulnerabilities.
+  # If empty, ALL rules.
+  rule-ids-includes:
+
+  # rule-ids-excludes: list of ruleId to exclude to remediate vulnerabilities.
+  # If empty, NO rule will be excluded
+  rule-ids-excludes:
+
+  # Remediation strategies:
+  # fix-all-files: one pr to remediate all vulnerabilities.
+  # fix-all-by-file: one pr to remediate all vulnerabilities in a file
+  # fix-one-by-file: one pr to remediate all vulnerabilities of same rule in a file
+  # fix-all-same-rule-files: one pr to remediate all vulnerabilities of same rule in all files
+  remediation-strategy: 'fix-all-by-file'
+
+  ai-agents:
+    # Use the default Xygeni Remediation AI
+    xygeni:
+
+    # Or configure these agents to use your own Remediation AI
+    anthropic:
+      host: ${ANTHROPIC_HOST:-https://api.anthropic.com/v1}
+      token: ${ANTHROPIC_TOKEN}
+      model: ${ANTHROPIC_MODEL:-claude-sonnet-4-20250514}
+
+    gemini:
+      host: ${GEMINI_HOST:-https://generativelanguage.googleapis.com/v1beta}
+      token: ${GEMINI_TOKEN}
+      model: ${GEMINI_MODEL:-gemini-2.5-flash}
+
+    groq:
+      host: ${GROQ_HOST:-https://api.groq.com/openai/v1}
+      token: ${GROQ_TOKEN}
+      model: ${GROQ_MODEL:-gemma2-9b-it}
+
+    openai:
+      host: ${OPENAI_HOST:-https://api.openai.com/v1}
+      token: ${OPENAI_TOKEN}
+      model: ${OPENAI_MODEL:-gpt-4o}
+
+    openrouter:
+      host: ${OPENROUTER_HOST:-https://openrouter.ai/api/v1}
+      token: ${OPENROUTER_TOKEN}
+      model: ${OPENROUTER_MODEL:-openai/gpt-4o}
+
+  # This property sets the AI agent to be used. One of the available within ai-agents.
+  # Use global to use the integration configured into your account if any; Else it defaults to xygeni
+  ai-remediation-agent: global
