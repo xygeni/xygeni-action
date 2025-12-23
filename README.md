@@ -14,18 +14,18 @@ GitHub Action for Xygeni Scanner.
 
 ## Introduction
 
-[GitHub Actions](https://docs.github.com/en/actions) are a platform for continuous integration in GitHub repositories. 
+[GitHub Actions](https://docs.github.com/en/actions) are a platform for continuous integration in GitHub repositories.
 An action encodes a reusable task with configurable parameters.
 
 Xygeni provides a `xygeni-action` for downloading and running the scanner as a step in a GitHub workflow.
 
 ## Usage
 
-The `xygeni-action` downloads, configures and executes the Xygeni Scanner on the repository where the action is invoked. 
+The `xygeni-action` downloads, configures and executes the Xygeni Scanner on the repository where the action is invoked.
 
 ### Setting API token as encrypted secret in GitHub
 
-The scanner needs an *API token* to communicate with the Xygeni platform. To register in the Xygeni platform, please register in the [xygeni.io](https://xygeni.io/book-a-demo). 
+The scanner needs an *API token* to communicate with the Xygeni platform. To register in the Xygeni platform, please register in the [xygeni.io](https://xygeni.io/book-a-demo).
 
 Such API token is a secret that could be registered safely at the appropriate scope (organization, repository or environment) using [GitHub Encrypted Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
@@ -63,15 +63,15 @@ gh secret set --org ORG_NAME XYGENI_TOKEN
 gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
 
 # Or limit visibility of the secret to the selected repos
-gh secret set --org ORG_NAME XYGENI_TOKEN --visibility all
+gh secret set --org ORG_NAME XYGENI_TOKEN --visibility selected --repos repo1,repo2
 ```
 
 You may use the corresponding GitHub webpages for setting the api token as a secret named `XYGENI_TOKEN` at the appropriate scope.
 
 ### Add a step calling the action to a workflow
 
-In a GitHub workflow (`.github/workflows/*.yml`) the Xygeni scanner could be run on the repository files, 
-typically after `actions/checkout` to retrieve the branch sources. 
+In a GitHub workflow (`.github/workflows/*.yml`) the Xygeni scanner could be run on the repository files,
+typically after `actions/checkout` to retrieve the branch sources.
 The `GITHUB_WORKSPACE` environment variable will contain the default location of the repository when using the checkout action.
 
 You can configure a GitHub action with the form:
@@ -90,16 +90,14 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        # You may instead pin an action SHA, like this: 
-        # uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
-        uses: actions/checkout@v3.5.3
+        # You may instead pin to an action SHA
+        uses: actions/checkout@v6.0.1
         with:
-          # The default depth of 1 commit is not enough for some scans 
+          # The default depth of 1 commit is not enough for some scans
           fetch-depth: 0
-        
+
       - name: Xygeni-Scanner
-        # Pinned: xygeni/xygeni@4e94e5ea737f5ebfedac8b1a5b75d8c60c21932d
-        uses: xygeni/xygeni-action@v3.2.0
+        uses: xygeni/xygeni-action@v5.38.0
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
@@ -107,47 +105,49 @@ jobs:
 
 Where `XYGENI_TOKEN` is the name of the encrypted secret where the API token was saved.
 
-> TIP: There is a [starter workflow](https://docs.github.com/en/actions/using-workflows/using-starter-workflows) for Xygeni, which provides assistance for creating a scan job with Xygeni. 
+> TIP: There is a [starter workflow](https://docs.github.com/en/actions/using-workflows/using-starter-workflows) for Xygeni, which provides assistance for creating a scan job with Xygeni.
 > Just go to `Actions` tab, click on `New Workflow` button, and write `xygeni` in the `Search workflows` field.
 
 ### Parameters
 
-Only the API token (or alternatively the username + password) is required.
+Only the API token is required.
 
-The default values for some parameters can be changed. For example, you may specify a specific name for the project instead of the GitNug repository name (GITHUB_REPOSITORY). Also, you may want to scan a particular source subdirectory instead of the default, por example `${{ github.repository }}/src`. 
+The default values for some parameters can be changed. For example, you may specify a specific name for the project instead of the GitHub repository name (GITHUB_REPOSITORY). Also, you may want to scan a particular source subdirectory instead of the default.
 You can see more information about default GitHub environment variables [here](https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables).
 
 The available parameters for the action are:
 
-| Parameter   | Description                                                                           | Mandatory  | Default value                                           |
-|-------------|---------------------------------------------------------------------------------------|:----------:|---------------------------------------------------------|
-| xygeni_url  | Base URL of the Xygeni API.                                                           |   false    | https://api.xygeni.com                                  |
-| gh_token    | GitHub token to retrieve repository information for misconfigurations and compliance. |   false    |                                                         |
-| token       | API token                                                                             |   false    |                                                         |
-| username    | Xygeni account's username. Not recommended, use token instead.                        |   false    |                                                         |
-| password    | Xygeni account's password. Not recommended, use token instead.                        |   false    |                                                         |
-| command     | Command to execute by the scanner                                                     |   false    | `scan --never-fail -n ${{ github.repository }} -d /app` |
+| Parameter            | Description                                                                           | Mandatory | Default value                    |
+|----------------------|---------------------------------------------------------------------------------------|:---------:|----------------------------------|
+| token                | API token for authentication with Xygeni platform.                                    |   true    |                                  |
+| command              | Command to execute by the scanner.                                                    |   false   | `scan --never-fail`              |
+| gh_token             | GitHub token to retrieve repository information for misconfigurations and compliance. |   false   | `$GITHUB_TOKEN`                  |
+| xygeni_url           | Base URL of the Xygeni API.                                                           |   false   | `https://api.xygeni.io`          |
+| xygeni_dashboard_url | Base URL of the Xygeni Dashboard.                                                     |   false   | `https://in.xygeni.io/dashboard` |
 
 > **Tip:** Use `--never-fail` to avoid breaking the build if the scan finds issues or fails.
 > You may also use `--fail-on=critical` to terminate the build only when critical issues are found.
 
 > **Tip:** Use `--run=secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
 
-> **Tip** If you want to analyze a subdirectory, you can configure the command with `-d` parameter starting with `/app/{YOUR PATH IN THE APPLICATION}`.
+> **Tip:** If you want to analyze a subdirectory, you can configure the command with `-d` parameter.
+> For example, use `-d /app` if the directory to scan is the `app` directory in your repository.
 
-Example for scanning only code tampering, hard-coded secrets and IaC flaws detectors, and failing the build only when critical issues are found:
+Example for scanning only hard-coded secrets and IaC flaws in the `app` subdirectory, and failing the build only when critical issues are found:
 
 ```yaml
   - name: Xygeni-Scanner
-    uses: xygeni/xygeni-action@v3.2.0
+    uses: xygeni/xygeni-action@v5.38.0
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}
-      command: scan -n ${{ github.repository }} -d /app --run=codetamper,secrets,iac --fail-on=critical
+      command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=critical
 ```
 
-# Security
+See [Xygeni scan command](https://docs.xygeni.io/xygeni-scanner-cli/xygeni-cli-overview/xygeni-cli-operation-modes/single-scan) for full information on the `command` options available.
+
+## Security
 
 Xygeni-action follows good security practices, but 100% security cannot be assured. Xygeni-action is provided **"as is"** without any **warranty**. Use at your own risk.
 
-For more information and to report security issues, please refer to our [security documentation](SECURITY.md)
+For more information about to report security issues, please refer to our [security documentation](SECURITY.md).
