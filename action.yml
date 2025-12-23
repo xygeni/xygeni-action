@@ -6,22 +6,9 @@ author: 'Xygeni'
 description: 'Runs Xygeni Scanner'
 
 inputs:
-  xygeni_url:
-    description: 'Base URL of the Xygeni API.'
-    required: false
-    default: 'https://api.xygeni.io'
   token:
-    description: 'API token. Must be provided, or username/password as alternative.'
-    required: false
-    default: ''
-  username:
-    description: 'Username (using API token is recommended)'
-    required: false
-    default: ''
-  password:
-    description: 'Password (using API token is recommended)'
-    required: false
-    default: ''
+    description: 'API token for authentication with Xygeni platform.'
+    required: true
   command:
     description: 'Command to execute by the scanner'
     required: false
@@ -30,6 +17,14 @@ inputs:
     description: 'GitHub token to retrieve repository information for misconfigurations and compliance.'
     required: false
     default: $GITHUB_TOKEN
+  xygeni_url:
+    description: 'Base URL of the Xygeni API.'
+    required: false
+    default: 'https://api.xygeni.io'
+  xygeni_dashboard_url:
+    description: 'Base URL of the Xygeni Dashboard.'
+    required: false
+    default: 'https://in.xygeni.io/dashboard'
 
 branding:
   color: 'green'
@@ -40,10 +35,23 @@ runs:
   steps:
     - name: 'Download & Install Xygeni Scanner'
       shell: bash
-      run: curl -L https://get.xygeni.io/latest/scanner/install.sh | /bin/bash -s -- -t "${{ inputs.token }}" -u "${{ inputs.username }}" -p "${{ inputs.password }}" -s ${{ inputs.xygeni_url }}
-    
+      run: |
+        echo "Downloading Xygeni Scanner..."
+        curl -sSfL https://get.xygeni.io/latest/scanner/xygeni_scanner.zip -o /tmp/xygeni_scanner.zip
+        echo "Installing Xygeni Scanner to $HOME/.xygeni..."
+        mkdir -p $HOME/.xygeni
+        unzip -q -o /tmp/xygeni_scanner.zip -d $HOME/.xygeni
+        mv $HOME/.xygeni/xygeni_scanner/* $HOME/.xygeni/
+        rmdir $HOME/.xygeni/xygeni_scanner
+        rm /tmp/xygeni_scanner.zip
+        chmod +x $HOME/.xygeni/xygeni
+        echo "Xygeni Scanner installed successfully."
+
     - name: 'Run Xygeni Scanner'
       shell: bash
       run: $HOME/.xygeni/xygeni ${{ inputs.command }} -d ${{ github.workspace }}
       env:
+        XYGENI_TOKEN: ${{ inputs.token }}
+        XYGENI_URL: ${{ inputs.xygeni_url }}
+        XYGENI_DASHBOARD_URL: ${{ inputs.xygeni_dashboard_url }}
         GITHUB_TOKEN: ${{ inputs.gh_token }}
