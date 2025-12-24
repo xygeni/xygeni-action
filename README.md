@@ -1,3 +1,5 @@
+[![Latest Release](https://img.shields.io/github/v/release/xygeni/xygeni-action)](https://github.com/xygeni/xygeni-action/releases/latest)
+
 # xygeni-action
 
 GitHub Action for Xygeni Scanner.
@@ -91,13 +93,13 @@ jobs:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
         # You may instead pin to an action SHA
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6
         with:
           # The default depth of 1 commit is not enough for some scans
           fetch-depth: 0
 
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v5.38.0
+        uses: xygeni/xygeni-action@v5
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
@@ -131,17 +133,18 @@ The available parameters for the action are:
 > **Tip:** Use `--run=secrets,iac` if you want to scan only for secrets and IaC flaws, for example.
 
 > **Tip:** If you want to analyze a subdirectory, you can configure the command with `-d` parameter.
-> For example, use `-d /app` if the directory to scan is the `app` directory in your repository.
+> For example, use `-d app` if the directory to scan is the `app` directory in your repository.
 
 Example for scanning only hard-coded secrets and IaC flaws in the `app` subdirectory, and failing the build only when critical issues are found:
 
 ```yaml
   - name: Xygeni-Scanner
-    uses: xygeni/xygeni-action@v5.38.0
+    # Recommended: use commit SHA instead
+    uses: xygeni/xygeni-action@v5
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}
-      command: scan -n ${{ github.repository }} -d /app --run=secrets,iac --fail-on=critical
+      command: scan -n ${{ github.repository }} -d app --run=secrets,iac --fail-on=critical
 ```
 
 See [Xygeni scan command](https://docs.xygeni.io/xygeni-scanner-cli/xygeni-cli-overview/xygeni-cli-operation-modes/single-scan) for full information on the `command` options available.
