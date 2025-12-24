@@ -39,23 +39,23 @@ jobs:
     steps:
       - name: Checkout
         # You may pin to an action SHA
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6
         with:
           # Full git history for better code tampering detection.
           fetch-depth: 0
 
       - name: Xygeni scan
-        uses: xygeni/xygeni-action@v5.38.0
+        uses: xygeni/xygeni-action@v5
         with:
           # Store you Xygeni api token as a repo/organization/environment secret
           token: ${{ secrets.XYGENI_TOKEN }}
-          # For analyzing misconfigurations in your GitHub repos/organization you may use a token with more permissions
+          # For analyzing misconfigurations in your GitHub repos/organization, you may use a token with more permissions
           gh_token: ${{ secrets.GITHUB_TOKEN }}
 
           # Default: run all scans, upload to Xygeni, send findings to Code Scanning alerts
           command: >
             scan 
-              --name ${{ github.repository }} --dir /app 
+              --name "${{ github.repository }}" --dir . 
               --send-to=github/alerts --try-all-scans --never-fail
 
           # Alternate command examples:
@@ -66,17 +66,18 @@ jobs:
           #command: >
           #  scan
           #    --run=inventory,codetamper,secrets,suspectdeps,iac
-          #    --name ${{ github.repository }} --dir /app
+          #    --name "${{ github.repository }}"
           #    --send-to=github/status --try-all-scans --never-fail
           #
-          ## Run partial scans, do not upload, send findings to Commit status/comments, fail the build if critical issue
+          ## Run partial scans on the 'app' subdir, do not upload, send findings to Commit status/comments,
+          ## fail the build if critical issue
           #command: >
           #  scan
-          #    --run=codetamper,secrets,misconf,suspectdeps,iac
-          #    --name ${{ github.repository }} --dir /app
+          #    --run=secrets,misconf,suspectdeps,iac
+          #    --name "${{ github.repository }}" --dir app
           #    --send-to=github/status --no-upload --try-all-scans --fail-on=critical
           #
           ## Run a single scan (codetamper) to check if a critical file was modified without review
           #command: >
-          #  codetamper -n ${{ github.repository }} -d /app --upload --send-to=github/status --fail-on=critical
+          #  codetamper -n "${{ github.repository }}" --upload --send-to=github/status --fail-on=critical
 
