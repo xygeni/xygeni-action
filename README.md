@@ -151,6 +151,10 @@ See [Xygeni scan command](https://docs.xygeni.io/xygeni-scanner-cli/xygeni-cli-o
 
 ## Security
 
+### Checksum Verification
+
+The action automatically verifies the integrity of the downloaded scanner by checking its SHA-256 checksum against the published value at [xygeni/xygeni](https://raw.githubusercontent.com/xygeni/xygeni/main/checksum/latest/xygeni-release.zip.sha256). If the checksum does not match, the action will fail and the scanner will not be installed. This verification is mandatory and cannot be disabled.
+
 Xygeni-action follows good security practices, but 100% security cannot be assured. Xygeni-action is provided **"as is"** without any **warranty**. Use at your own risk.
 
 For more information about to report security issues, please refer to our [security documentation](SECURITY.md).

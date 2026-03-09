@@ -33,11 +33,25 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - name: 'Download & Install Xygeni Scanner'
+    - name: 'Download & Verify Xygeni Scanner'
       shell: bash
       run: |
         echo "Downloading Xygeni Scanner..."
         curl -sSfL https://get.xygeni.io/latest/scanner/xygeni_scanner.zip -o /tmp/xygeni_scanner.zip
+
+        echo "Verifying checksum..."
+        EXPECTED_CHECKSUM=$(curl -sSfL https://raw.githubusercontent.com/xygeni/xygeni/main/checksum/latest/xygeni-release.zip.sha256)
+        ACTUAL_CHECKSUM=$(sha256sum /tmp/xygeni_scanner.zip | awk '{print $1}')
+        if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then
+          echo "::error::Checksum verification failed! Expected: $EXPECTED_CHECKSUM, Got: $ACTUAL_CHECKSUM"
+          rm -f /tmp/xygeni_scanner.zip
+          exit 1
+        fi
+        echo "Checksum verification passed."
+
+    - name: 'Install Xygeni Scanner'
+      shell: bash
+      run: |
         echo "Installing Xygeni Scanner to $HOME/.xygeni..."
         mkdir -p $HOME/.xygeni
         unzip -q -o /tmp/xygeni_scanner.zip -d $HOME/.xygeni
