@@ -99,13 +99,19 @@ jobs:
           fetch-depth: 0
 
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v5
+        uses: xygeni/xygeni-action@v6
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
 ```
 
 Where `XYGENI_TOKEN` is the name of the encrypted secret where the API token was saved.
+
+> TIP: For enhanced security, you can pin the action to a specific commit SHA instead of a version tag.
+> Find the commit SHA for a release at https://github.com/xygeni/xygeni-action/releases and use it as follows:
+> ```yaml
+> uses: xygeni/xygeni-action@<commit-sha>
+> ```
 
 > TIP: There is a [starter workflow](https://docs.github.com/en/actions/using-workflows/using-starter-workflows) for Xygeni, which provides assistance for creating a scan job with Xygeni.
 > Just go to `Actions` tab, click on `New Workflow` button, and write `xygeni` in the `Search workflows` field.
@@ -140,7 +146,7 @@ Example for scanning only hard-coded secrets and IaC flaws in the `app` subdirec
 ```yaml
   - name: Xygeni-Scanner
     # Recommended: use commit SHA instead
-    uses: xygeni/xygeni-action@v5
+    uses: xygeni/xygeni-action@v6
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}
