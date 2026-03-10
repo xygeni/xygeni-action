@@ -38,14 +38,13 @@ jobs:
 
     steps:
       - name: Checkout
-        # You may pin to an action SHA
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Full git history for better code tampering detection.
           fetch-depth: 0
 
       - name: Xygeni scan
-        uses: xygeni/xygeni-action@v5
+        uses: xygeni/xygeni-action@13c6ed2797df7d85749864e2cbcf09c893f43b23 # v6.4.0
         with:
           # Store you Xygeni api token as a repo/organization/environment secret
           token: ${{ secrets.XYGENI_TOKEN }}
