@@ -92,14 +92,13 @@ jobs:
     steps:
       # Checkout the repository sources (GITHUB_WORKSPACE)
       - name: Checkout
-        # You may instead pin to an action SHA
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # The default depth of 1 commit is not enough for some scans
           fetch-depth: 0
 
       - name: Xygeni-Scanner
-        uses: xygeni/xygeni-action@v6
+        uses: xygeni/xygeni-action@13c6ed2797df7d85749864e2cbcf09c893f43b23 # v6.4.0
         id: Xygeni-Scanner
         with:
           token: ${{ secrets.XYGENI_TOKEN }}
@@ -145,8 +144,7 @@ Example for scanning only hard-coded secrets and IaC flaws in the `app` subdirec
 
 ```yaml
   - name: Xygeni-Scanner
-    # Recommended: use commit SHA instead
-    uses: xygeni/xygeni-action@v6
+    uses: xygeni/xygeni-action@13c6ed2797df7d85749864e2cbcf09c893f43b23 # v6.4.0
     id: Xygeni-Scanner
     with:
       token: ${{ secrets.XYGENI_TOKEN }}

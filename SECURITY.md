@@ -26,7 +26,7 @@ When using this action, we recommend:
 
 1. **Store API tokens as GitHub Encrypted Secrets** - Never hardcode tokens in workflows.
 2. **Use the latest version** - Keep the action updated to receive security fixes.
-3. **Pin to a specific version** - Use exact version tags (e.g., `@v5.38.0`) rather than floating tags.
+3. **Pin to a specific commit SHA** - Use commit SHAs (e.g., `@13c6ed2797df7d85749864e2cbcf09c893f43b23`) rather than version tags.
 4. **Limit token permissions** - Use tokens with the minimum required permissions.
 
 ## Security Features
