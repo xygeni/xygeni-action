@@ -16,7 +16,7 @@ inputs:
   gh_token:
     description: 'GitHub token to retrieve repository information for misconfigurations and compliance.'
     required: false
-    default: $GITHUB_TOKEN
+    default: ${{ github.token }}
   xygeni_url:
     description: 'Base URL of the Xygeni API.'
     required: false
