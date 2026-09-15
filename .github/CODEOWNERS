@@ -1,0 +1,38 @@
+# .github/CODEOWNERS — xygeni-action
+# Code Owners — see technical_guidelines_secure_software_pipelines.md
+# Last matching rule wins. More specific patterns go below general ones.
+
+# Default: repo maintainers
+*                                       @xygeni/scan-integration
+
+# GitHub configuration — security review
+/.github/                               @xygeni/security
+
+# CI/CD workflows — security + release engineering review
+/.github/workflows/                     @xygeni/security @xygeni/release-engineering
+
+# CODEOWNERS itself — self-protection
+/.github/CODEOWNERS                     @xygeni/security
+
+# Dependency descriptors — supply chain attack surface
+pom.xml                                 @xygeni/security @xygeni/scan-integration
+package.json                            @xygeni/security @xygeni/scan-integration
+package-lock.json                       @xygeni/security @xygeni/scan-integration
+build.gradle.kts                        @xygeni/security @xygeni/scan-integration
+.npmrc                                  @xygeni/security
+settings.xml                            @xygeni/security
+
+# Xygenibot configuration — SCA and remediation policy
+xygenibot.yml                           @xygeni/security
+
+# Container definitions
+Dockerfile*                             @xygeni/security @xygeni/release-engineering
+docker-compose*                         @xygeni/security @xygeni/release-engineering
+
+# Pre-commit hooks
+.pre-commit-hooks.yaml                  @xygeni/security
+.pre-commit-config.yaml                 @xygeni/security
+
+# Action definition — was attack vector in March 2026 incident
+action.yml                               @xygeni/security @xygeni/scan-integration
+
